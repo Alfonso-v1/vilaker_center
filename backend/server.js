@@ -22,18 +22,19 @@ const PORT = process.env.BACKEND_PORT;
 // ########## ROUTE HANDLERS
 
 // READ ROUTES
-app.get('/bsg-people', async (req, res) => {
+app.get('/members', async (req, res) => {
     try {
         // Create and execute our queries
         // In query1, we use a JOIN clause to display the names of the homeworlds
-        const query1 = `SELECT bsg_people.id, bsg_people.fname, bsg_people.lname, \
-            bsg_planets.name AS 'homeworld', bsg_people.age FROM bsg_people \
-            LEFT JOIN bsg_planets ON bsg_people.homeworld = bsg_planets.id;`;
-        const query2 = 'SELECT * FROM bsg_planets;';
-        const [people] = await db.query(query1);
-        const [homeworlds] = await db.query(query2);
+        const query1 = `SELECT Members.member_id AS 'Member ID', Members.first_name AS 'First Name', \
+            Members.last_name AS 'Last Name', Members.email AS 'Email', MemberTiers.tier_name AS 'Member Tier' \
+            FROM Members \
+            LEFT JOIN MemberTiers ON Members.membership_tier = MemberTiers.membership_tier;`;
+        const query2 = 'SELECT * FROM MemberTiers;';
+        const [members] = await db.query(query1);
+        const [memberTiers] = await db.query(query2);
     
-        res.status(200).json({ people, homeworlds });  // Send the results to the frontend
+        res.status(200).json({ members, memberTiers });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);
