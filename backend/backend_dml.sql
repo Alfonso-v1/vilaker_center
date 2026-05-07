@@ -2,7 +2,7 @@
     Data Manipulation Queries for Project Group 21: Vilaker Community Center.
     Authored by Kylee Longaker
     Edited and Approved by Alfonso Vilchez
-    Last Edited: 5/7/2026 10:48
+    Last Edited: 5/7/2026 10:55
 */
 
 -- User Interaction Denoted by & --
@@ -28,7 +28,7 @@ DELETE FROM MemberTiers WHERE membership_tier = (SELECT membership_tier FROM Mem
 
 --End of MemberTiers Page--
 
-
+    
 --Members Page--
 
 /* Display current # of members */
@@ -75,7 +75,7 @@ WHERE class_name = &class_name AND instructor_name = &instructor_name
 
 /* DELETE future registrations for a specific class name (in case class is no longer offered) */
 DELETE FROM ClassRegistrations WHERE class_id = (SELECT class_id FROM Classes WHERE 
-  class_name = &class_name AND end_date >= CURDATE ())
+  class_name = &class_name AND end_date >= CURDATE())
 
 /* DELETE classes by a specific course name (in case course is not longer offered) */
 DELETE FROM Classes WHERE class_id = (SELECT class_id FROM Classes WHERE class_name = &class_name);
@@ -98,7 +98,7 @@ INSERT INTO Tools (name, condition, membership_tier, rental_fee)
 VALUES (&name, &condition, (SELECT membership_tier FROM MemberTiers WHERE tier_name = &tier_name), &rental_fee);
 
 /* DELETE tool */
-DELETE FROM Tools WHERE tool_id = (SELECT tool_id WHERE name = &name AND
+DELETE FROM Tools WHERE tool_id = (SELECT tool_id FROM Tools WHERE name = &name AND
     condition = &condition AND rental_fee = &rental_fee);
 
 --End of Tools Page--
@@ -126,7 +126,7 @@ VALUES(
             WHERE Members.first_name = &first_name AND Members.last_name = &last_name) 
         DAY),
     --Optional return date (if returned)--
-    returned_date = &returned_date,
+    &returned_date,
     --Fee calculated based on the membership tier discount and the tool fee--
     (SELECT Tools.rental_fee * (1 - MemberTiers.rental_discount)
         FROM Tools
@@ -156,6 +156,6 @@ VALUES ((SELECT member_id FROM Members WHERE last_name = &last_name AND email = 
 
 /* DELETE an instance of a registration */
 DELETE FROM ClassRegistrations WHERE member_id = (SELECT member_id FROM Members WHERE last_name = &last_name AND email = &email)
-AND (SELECT class_id FROM Classes WHERE class_name = &class_name AND start_date = &start_date);
+AND class_id = (SELECT class_id FROM Classes WHERE class_name = &class_name AND start_date = &start_date);
 
 --End of ClassRegistrations Page--
