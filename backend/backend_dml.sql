@@ -2,7 +2,7 @@
     Data Manipulation Queries for Project Group 21: Vilaker Community Center.
     Authored by Kylee Longaker
     Edited and Approved by Alfonso Vilchez
-    Last Edited: 5/7/2026 10:55
+    Last Edited: 5/7/2026 10:59
 */
 
 -- User Interaction Denoted by & --
@@ -23,12 +23,9 @@ WHERE first_name = &first_name AND last_name = &last_name AND email = &email;
 INSERT INTO MemberTiers (tier_name, price, rental_discount, rental_period)
 VALUES (&tier_name, &price, &rental_discount, &rental_period);
 
-/* DELETE a tier by tier name */
-DELETE FROM MemberTiers WHERE membership_tier = (SELECT membership_tier FROM MemberTiers WHERE tier_name = &tier_name)
-
 --End of MemberTiers Page--
 
-    
+
 --Members Page--
 
 /* Display current # of members */
@@ -47,7 +44,7 @@ DELETE FROM ClassRegistrations WHERE member_id = (SELECT member_id FROM Members 
 AND class_id IN (SELECT class_id FROM Classes WHERE end_date >= CURDATE());
 
 /* DELETE a member */
-DELETE FROM Members WHERE member_id = (SELECT member_id WHERE email = &email AND last_name = &last_name
+DELETE FROM Members WHERE member_id = (SELECT member_id FROM Members WHERE email = &email AND last_name = &last_name
 AND first_name = &first_name);
 
 --End of Members Page
@@ -70,7 +67,7 @@ UPDATE Classes SET instructor_name = &instructor_name
 WHERE class_name = &class_name AND start_date = &start_date AND end_date = &end_date;
 
 /* UPDATE start date and end date based on class name and instructor name */
-UPDATE Classes SET start_date = &start_date AND end_date = &end_date
+UPDATE Classes SET start_date = &start_date, end_date = &end_date
 WHERE class_name = &class_name AND instructor_name = &instructor_name
 
 /* DELETE future registrations for a specific class name (in case class is no longer offered) */
