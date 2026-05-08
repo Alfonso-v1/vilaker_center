@@ -46,8 +46,9 @@ function ClassRegistrations({ backendURL }) {
 
                 </tbody>
       </table>
-
-      <CreateClassRegistrationForm classes={classes} backendURL={backendURL} refresh={getData} />
+      <div className="forms">
+        <CreateClassRegistrationForm classes={classes} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }

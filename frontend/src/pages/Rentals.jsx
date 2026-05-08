@@ -46,9 +46,9 @@ function Rentals({ backendURL }) {
 
                 </tbody>
       </table>
-
-      <CreateRentalForm tools={tools} backendURL={backendURL} refresh={getData} />
-      
+      <div className="forms">
+        <CreateRentalForm tools={tools} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }
