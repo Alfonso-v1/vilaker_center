@@ -45,9 +45,10 @@ function Classes({ backendURL }) {
 
                 </tbody>
       </table>
-
-      <CreateClassForm backendURL={backendURL} refresh={getData} />
-      <UpdateClassForm classes={classes} backendURL={backendURL} refresh={getData} />
+      <div className="forms">
+        <CreateClassForm backendURL={backendURL} refresh={getData} />
+        <UpdateClassForm classes={classes} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }

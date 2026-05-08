@@ -47,9 +47,10 @@ function Tools({ backendURL }) {
 
                 </tbody>
       </table>
-
-      <CreateToolForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
-      <UpdateToolForm tools={tools} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+      <div className="forms">
+        <CreateToolForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+        <UpdateToolForm tools={tools} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }

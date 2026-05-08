@@ -1,4 +1,132 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
+  font-size: 15px;
+  color: black;
+  background-color: white;
+  padding: 10px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+}
+
+.nav-links a {
+  text-decoration: none;
+  padding: 6px 12px;
+  font-size: 16px;
+}
+
+.nav-links a:hover {
+  background: darkgray;
+  color: white;
+}
+
+.nav-links a.active {
+  background: darkgray;
+  color: white;
+}
+
+main {
+  padding: 24px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 32px 0 12px;
+  text-align: center;
+}
+
+p {
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px 12px;
+  border: 1px solid black;
+}
+
+thead tr {
+  background-color: lightslategrey;
+  color: white;
+}
+
+tbody tr:hover{
+  background-color: lightgray;
+}
+
+.cuForm {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: 8px 12px;
+  max-width: 480px;
+}
+
+.cuForm label {
+  font-weight: 500;
+}
+
+.cuForm input, 
+.cuForm select {
+  padding: 6px 8px;
+  border: 1px solid darkgray;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.cuForm input[type='submit'] {
+  grid-column: 2;
+  padding: 7px 16px;
+  cursor: pointer;
+  border: 1px solid  darkgray;
+  background-color: #f0f0f0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+td button {
+  padding: 4px 10px;
+  cursor: pointer;
+  border: 1px solid darkgray;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  font-size: 14px;
+}
+
+td button:hover{
+  background-color: darkslategray;
+  color: white;
+}
+
+.forms {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.forms > div {
+  flex: 1 1 300px;
+  max-width: 500px;
+  border: 1px solid black;
+  border-radius: 6px;
+  padding: 20px 24px;
 }

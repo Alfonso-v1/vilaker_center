@@ -44,8 +44,9 @@ function MemberTiers({ backendURL }) {
 
                 </tbody>
       </table>
-
+      <div className="forms">
       <UpdateMemberTierForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }

@@ -47,10 +47,10 @@ function Members({ backendURL }) {
 
                 </tbody>
       </table>
-    
-      <CreateMemberForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
-      <UpdateMemberForm members={members} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
-
+      <div className="forms">
+        <CreateMemberForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+        <UpdateMemberForm members={members} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+      </div>
     </div>
   );
 }
