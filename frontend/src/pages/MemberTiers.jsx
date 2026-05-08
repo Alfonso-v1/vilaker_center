@@ -1,5 +1,6 @@
 import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
+import UpdateMemberTierForm from "../components/UpdateMemberTierForm";
 
 function MemberTiers({ backendURL }) {
   
@@ -38,11 +39,13 @@ function MemberTiers({ backendURL }) {
 
                 <tbody>
                     {memberTiers.map((tier, index) => (
-                      <TableRow key={index} rowObject={tier} backendURL={backendURL} refreshClasses={getData} />
+                      <TableRow key={index} rowObject={tier} backendURL={backendURL} refresh={getData} />
                     ))}
 
                 </tbody>
       </table>
+
+      <UpdateMemberTierForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
     </div>
   );
 }
