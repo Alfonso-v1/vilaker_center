@@ -23,12 +23,13 @@ function Members({ backendURL }) {
   };
 
   useEffect(() => {
-      getData();
+    getData();
   }, []);
 
   return (
     <div>
-      <h1>Members</h1>
+      <h1>Browse Our Members</h1>
+      <p>Add new members or Edit existing members</p>
       <table>
                 <thead>
                     <tr>
