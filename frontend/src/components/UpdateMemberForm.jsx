@@ -1,4 +1,4 @@
-const UpdateMemberForm = ({ members, memberTiers, backendURL, refreshMembers }) => {
+const UpdateMemberForm = ({ members, memberTiers, backendURL, refresh }) => {
     return (
         <div>
 

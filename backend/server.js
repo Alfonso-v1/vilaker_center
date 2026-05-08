@@ -43,7 +43,7 @@ app.get('/members', async (req, res) => {
 
 app.get('/memberTiers', async (req, res) => {
     try {
-        const query1 = `SELECT tier_name as Tier, price as 'Monthly Fee', \
+        const query1 = `SELECT tier_name as Tier, price as 'Annual Fee', \
             CONCAT(FORMAT(rental_discount * 100, 0), '%') as 'Rental Discount', \
             rental_period as 'Tool Rental Period (Days)' \
             FROM MemberTiers;`;
@@ -63,9 +63,11 @@ app.get('/tools', async (req, res) => {
         const query1 = `SELECT Tools.name as 'Tool', Tools.condition as 'Condition', \
             Tools.membership_tier as 'Minimum Required Tier', Tools.rental_fee as 'Rental Fee' \
             FROM Tools;`;
+        const query2 = 'SELECT * FROM MemberTiers;';
         const [tools] = await db.query(query1);
+        const [memberTiers] = await db.query(query2);
     
-        res.status(200).json({ tools });  // Send the results to the frontend
+        res.status(200).json({ tools, memberTiers });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -84,9 +86,11 @@ app.get('/rentals', async (req, res) => {
         FROM Rentals
         INNER JOIN Members ON Members.member_id = Rentals.member_id
         INNER JOIN Tools ON Tools.tool_id = Rentals.tool_id;`;
+        const query2 = `SELECT * FROM Tools;`;
         const [rentals] = await db.query(query1);
+        const [tools] = await db.query(query2);
     
-        res.status(200).json({ rentals });  // Send the results to the frontend
+        res.status(200).json({ rentals, tools });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -104,9 +108,11 @@ app.get('/classRegistrations', async (req, res) => {
             FROM Classes \
             LEFT JOIN ClassRegistrations ON Classes.class_id = ClassRegistrations.class_id \
             GROUP BY Classes.class_id, Classes.capacity, Classes.class_name;`;
+        const query2 = `SELECT * FROM Classes;`;
         const [classRegistrations] = await db.query(query1);
+        const [classes] = await db.query(query2);
     
-        res.status(200).json({ classRegistrations });  // Send the results to the frontend
+        res.status(200).json({ classRegistrations, classes });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);

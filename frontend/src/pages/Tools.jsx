@@ -1,17 +1,22 @@
 import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
+import CreateToolForm from "../components/CreateToolForm";
+import UpdateToolForm from "../components/UpdateToolForm";
 
 function Tools({ backendURL }) {
   
   const [tools, setTools] = useState([]);
+  const [memberTiers, setMemberTiers] = useState([]);
 
   const getData = async function () {
     try {
 
       const response = await fetch(backendURL + '/tools');
-      const { tools } = await response.json();
+      const { tools, memberTiers } = await response.json();
 
       setTools(tools);
+      setMemberTiers(memberTiers);
+
     } catch (error) {
       console.log(error)
     }
@@ -37,11 +42,14 @@ function Tools({ backendURL }) {
 
                 <tbody>
                     {tools.map((tool, index) => (
-                      <TableRow key={index} rowObject={tool} backendURL={backendURL} refreshTools={getData} />
+                      <TableRow key={index} rowObject={tool} backendURL={backendURL} refresh={getData} />
                     ))}
 
                 </tbody>
       </table>
+
+      <CreateToolForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
+      <UpdateToolForm tools={tools} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
+import CreateClassForm from "../components/CreateClassForm";
+import UpdateClassForm from "../components/UpdateClassForm";
 
 function Classes({ backendURL }) {
   
@@ -23,7 +25,7 @@ function Classes({ backendURL }) {
 
   return (
     <div>
-      <h1>Check our Current Class Offerings</h1>
+      <h1>Check out our Classes</h1>
       <p>Class Offerings will be updated on a periodic basis. Please check by every so ofter to see what we have to offer!</p>
 
       <table>
@@ -38,12 +40,14 @@ function Classes({ backendURL }) {
 
                 <tbody>
                     {classes.map((oneClass, index) => (
-                      <TableRow key={index} rowObject={oneClass} backendURL={backendURL} refreshClasses={getData} />
+                      <TableRow key={index} rowObject={oneClass} backendURL={backendURL} refresh={getData} />
                     ))}
 
                 </tbody>
       </table>
 
+      <CreateClassForm backendURL={backendURL} refresh={getData} />
+      <UpdateClassForm classes={classes} backendURL={backendURL} refresh={getData} />
     </div>
   );
 }

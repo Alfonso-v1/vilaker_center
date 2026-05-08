@@ -10,7 +10,7 @@
 --MemberTiers Page --
 
 /* SELECT (Display) MemberTiers Options */
-SELECT tier_name as Tier, price as 'Monthly Fee', rental_discount * 100 as 'Rental Discount', 
+SELECT tier_name as Tier, price as 'Annual Fee', rental_discount * 100 as 'Rental Discount', 
 rental_period as 'Tool Rental Period (Days)'
 FROM MemberTiers;
 
