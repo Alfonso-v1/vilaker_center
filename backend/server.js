@@ -109,10 +109,11 @@ app.get('/classRegistrations', async (req, res) => {
             LEFT JOIN ClassRegistrations ON Classes.class_id = ClassRegistrations.class_id \
             GROUP BY Classes.class_id, Classes.capacity, Classes.class_name;`;
         const query2 = `SELECT * FROM Classes;`;
+        const query3 = `SELECT * FROM Members`;
         const [classRegistrations] = await db.query(query1);
         const [classes] = await db.query(query2);
-    
-        res.status(200).json({ classRegistrations, classes });  // Send the results to the frontend
+        const [members] = await db.query(query3);
+        res.status(200).json({ classRegistrations, classes, members });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -139,6 +140,25 @@ app.get('/classes', async (req, res) => {
         res.status(500).send("An error occurred while executing the database queries.");
     }
     
+});
+
+app.get('/memberRegistrations/:member_id', async (req, res) => {
+    try {
+        const { member_id } = req.params;
+        const query1 = `SELECT CONCAT(Members.first_name, ' ', Members.last_name) AS 'Member Name', \
+            Classes.class_name as 'Class', DATE_FORMAT(start_date, '%M %d, %Y') as 'Begins On', \
+            DATE_FORMAT(end_date, '%M %d, %Y') as 'Ends On' \
+            FROM ClassRegistrations \
+            INNER JOIN Classes ON ClassRegistrations.class_id = Classes.class_id \
+            INNER JOIN Members ON ClassRegistrations.member_id = Members.member_id \
+            WHERE ClassRegistrations.member_id = ?`
+        const [registrations] = await db.query(query1, [member_id]);
+        res.status(200).json({ registrations });
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
 });
 
 // ########################################
