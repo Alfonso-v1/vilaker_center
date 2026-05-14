@@ -1,3 +1,13 @@
+/*
+CITATION FOR: Modal styling
+Date: 5/14/26
+Adapted From: Claude
+Originality: Claude designed the styling with some changes to sizing and colors from myself.
+Source URL: https://claude.ai/chat/
+Summary of Prompts: Claude was prompted to aid with styling that would allow the Manage Registration Modal to pop
+  in front of the background page.
+*/
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
@@ -129,4 +139,22 @@ td button:hover{
   border: 1px solid black;
   border-radius: 6px;
   padding: 20px 24px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset:0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-panel {
+  background-color: white;
+  padding: 2rem;
+  border: 1px solid grey;
+  max-width: 1200px;
+  width: 100%;
 }

@@ -1,4 +1,4 @@
-const CreateClassRegistrationForm = ({ classes, backendURL, refresh }) => {
+const CreateClassRegistrationForm = ({ classes, member_id, backendURL, refresh }) => {
     return (
         <div>
             <h2>Register for a Class</h2>
@@ -18,6 +18,8 @@ const CreateClassRegistrationForm = ({ classes, backendURL, refresh }) => {
                     type='number'
                     name='create_member_id'
                     id='create_member_id'
+                    value={member_id}
+                    readOnly
                 />
                 <input type='submit' />
             </form>

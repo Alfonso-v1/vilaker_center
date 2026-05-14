@@ -4,14 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-      "development": "vite",
-      "build": "vite build",
-      "production": "npx forever start reactServer.cjs",
-      "stop_production": "npx forever stop reactServer.cjs",
-      "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-      "preview": "vite preview"
+    "development": "vite",
+    "build": "vite build",
+    "production": "npx forever start reactServer.cjs",
+    "stop_production": "npx forever stop reactServer.cjs",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.10",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "forever": "^4.0.3",

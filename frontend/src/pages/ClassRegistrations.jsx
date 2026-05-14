@@ -1,20 +1,23 @@
 import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
 import CreateClassRegistrationForm from "../components/CreateClassRegistrationForm";
+import ManageRegistrationModal from "../components/ManageRegistrationModal";
 
 function ClassRegistrations({ backendURL }) {
   
   const [classRegistrations, setClassRegistrations] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [members, setMembers] = useState([]);
 
   const getData = async function () {
     try {
 
       const response = await fetch(backendURL + '/classRegistrations');
-      const { classRegistrations, classes } = await response.json();
+      const { classRegistrations, classes, members } = await response.json();
 
       setClassRegistrations(classRegistrations);
       setClasses(classes);
+      setMembers(members);
       
     } catch (error) {
       console.log(error)
@@ -46,8 +49,8 @@ function ClassRegistrations({ backendURL }) {
 
                 </tbody>
       </table>
-      <div className="forms">
-        <CreateClassRegistrationForm classes={classes} backendURL={backendURL} refresh={getData} />
+      <div>
+        <ManageRegistrationModal members={members} classes={classes} backendURL={backendURL} />
       </div>
     </div>
   );
