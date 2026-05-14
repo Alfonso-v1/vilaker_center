@@ -124,7 +124,7 @@ app.get('/classRegistrations', async (req, res) => {
 
 app.get('/classes', async (req, res) => {
     try {
-        const query1 = `SELECT class_id as 'Registration ID', instructor_name as Instructor, \
+        const query1 = `SELECT class_id as 'Class ID', instructor_name as Instructor, \
             class_name as Course, description as 'Course Description', \
             capacity as Capacity, \
             DATE_FORMAT(start_date, '%M %d, %Y') as 'Begins On', \
