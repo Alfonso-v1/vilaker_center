@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
+import { useState, useEffect } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
 import CreateClassForm from "../components/CreateClassForm";
 import UpdateClassForm from "../components/UpdateClassForm";
@@ -34,7 +34,7 @@ function Classes({ backendURL }) {
                         {classes.length > 0 && Object.keys(classes[0]).map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 

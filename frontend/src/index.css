@@ -148,13 +148,67 @@ td button:hover{
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 100;
 }
 
 .modal-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: white;
   padding: 2rem;
   border: 1px solid grey;
+  border-radius: 8px;
   max-width: 1200px;
   width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-panel h2 {
+  margin-top: 0;
+}
+
+.modal-panel select {
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.modal-panel .cuForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.modal-panel .cuForm input,
+.modal-panel .cuForm select {
+    padding: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.modal-panel .cuForm input[type='submit'] {
+    background-color: steelblue;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-close-btn {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
+
+.modal-panel button[onClick] {
+  margin-top: 1rem;
 }

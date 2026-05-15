@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
+import { useState, useEffect } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
 import CreateMemberForm from "../components/CreateMemberForm";
 import UpdateMemberForm from "../components/UpdateMemberForm";
@@ -36,7 +36,7 @@ function Members({ backendURL }) {
                         {members.length > 0 && Object.keys(members[0]).map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 

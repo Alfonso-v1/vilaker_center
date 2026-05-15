@@ -1,13 +1,11 @@
-const DeleteForm = ({ rowObject, backendURL, refresh }) => {
-
+const UpdateForm = ({ rowObject, backendURL, refresh }) => {
     return (
             <form>
                 <button type='submit'>
-                    Delete
+                    Update
                 </button>
             </form>
-
     );
-};
+}
 
-export default DeleteForm;
+export default UpdateForm;

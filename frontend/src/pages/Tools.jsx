@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react"; // Importing useState for managing state in the component
+import { useState, useEffect } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
 import CreateToolForm from "../components/CreateToolForm";
 import UpdateToolForm from "../components/UpdateToolForm";
@@ -36,7 +36,7 @@ function Tools({ backendURL }) {
                         {tools.length > 0 && Object.keys(tools[0]).map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
