@@ -2,7 +2,7 @@
     Data Manipulation Queries for Project Group 21: Vilaker Community Center.
     Authored by Kylee Longaker
     Edited and Approved by Alfonso Vilchez
-    Last Edited: 5/7/2026 10:59
+    Last Edited: 5/14/2026 17:06
 */
 
 -- User Interaction Denoted by & --
@@ -17,7 +17,7 @@ FROM MemberTiers;
 /* UPDATE option to adjust a current member's Member Tier.
         User must enter first name, last name, and email. */
 UPDATE Members SET membership_tier = &membership_tier_from_dropdown 
-WHERE first_name = &first_name AND last_name = &last_name AND email = &email;
+WHERE member_id = (SELECT member_id FROM Members WHERE first_name = &first_name AND last_name = &last_name AND email = &email);
 
 /* CREATE new tier */
 INSERT INTO MemberTiers (tier_name, price, rental_discount, rental_period)
@@ -32,7 +32,7 @@ VALUES (&tier_name, &price, &rental_discount, &rental_period);
 SELECT COUNT(member_id) as 'Number of Members' FROM Members;
 
 /* UPDATE member email address */
-UPDATE Members SET email = &email WHERE first_name = &first_name AND last_name = &last_name;
+UPDATE Members SET email = &email WHERE (SELECT member_id FROM Members WHERE first_name = &first_name AND last_name = &last_name);
 
 /* CREATE a new member */
 INSERT INTO Members (first_name, last_name, email, membership_tier)
@@ -53,7 +53,7 @@ AND first_name = &first_name);
 --Classes Page--
 
 /* Display available classes */ 
-SELECT class_id as 'Registration ID', instructor_name as Instructor, 
+SELECT class_id as 'Class ID', instructor_name as Instructor, 
 class_name as Course, description as 'Course Description', 
 capacity as Capacity, start_date as 'Begins On', end_date as 'Ends On'
 FROM Classes;
@@ -130,7 +130,13 @@ VALUES(
         JOIN Members ON Members.first_name = &first_name AND Members.last_name = &last_name AND Members.email = &email
         JOIN MemberTiers ON Members.membership_tier = MemberTiers.membership_tier
         WHERE Tools.name = &name_from_dropdown)
-)
+);
+
+/* UPDATE a rental to add a returned date */
+UPDATE Rentals SET returned_date = &returned_date
+    WHERE rental_id = (SELECT rental_id FROM Rentals 
+        WHERE member_id = (SELECT member_id FROM Members WHERE last_name = &last_name AND email = &email) 
+        AND tool_id = (SELECT tool_id FROM Tools WHERE name = &name_from_dropdown));
 
 --End of Rentals Page
 
@@ -150,6 +156,13 @@ GROUP BY Classes.class_id, Classes.capacity, Classes.class_name;
 INSERT INTO ClassRegistrations (member_id, class_id)
 VALUES ((SELECT member_id FROM Members WHERE last_name = &last_name AND email = &email), 
         (SELECT class_id FROM Classes WHERE class_name = &class_name AND start_date = &start_date));
+
+/* UPDATE the class that's on the registration (not a realistic scenario) */
+UPDATE ClassRegistrations SET class_id = (SELECT class_id FROM Classes WHERE class_name = &class_name AND instructor = &instructor
+    AND start_date = &start_date AND end_date = &end_date) 
+WHERE class_id = ((SELECT class_id FROM Classes WHERE class_name = &class_name AND instructor = &instructor
+    AND start_date = &start_date AND end_date = &end_date)) AND member_id = (SELECT member_id FROM Members WHERE first_name = &first_name 
+    AND last_name = &last_name AND email = &email);
 
 /* DELETE an instance of a registration */
 DELETE FROM ClassRegistrations WHERE member_id = (SELECT member_id FROM Members WHERE last_name = &last_name AND email = &email)
