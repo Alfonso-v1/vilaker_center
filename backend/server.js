@@ -161,6 +161,16 @@ app.get('/memberRegistrations/:member_id', async (req, res) => {
     }
 });
 
+app.post('/reset', async (req, res) => {
+    try {
+        await db.query('CALL sp_reset_db()');
+        res.status(200).json({ message: 'Database Reset' });
+    } catch (error) {
+        console.error('Reset Failed:', error);
+        res.status(500).json({ error: 'Database reset failed.' });
+    }
+});
+
 // ########################################
 // ########## LISTENER
 

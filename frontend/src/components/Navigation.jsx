@@ -1,6 +1,24 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
-function Navigation() {
+function Navigation({ backendURL }) {
+
+    const [resetting, setResetting] = useState(false);
+
+    const handleReset = async () => {
+        setResetting(true);
+
+        try {
+            const res = await fetch(backendURL + '/reset', { method: 'POST' });
+            if (!res.ok) throw new Error('Reset failed.');
+            window.location.reload();
+        } catch (error) {
+            alert('Could not reset the database.');
+            console.error(error);
+            setResetting(false);
+        } 
+    };
+
     return (
         <nav>
             <div className="nav-links">
@@ -11,6 +29,9 @@ function Navigation() {
                 <NavLink to="/rentals">Rentals</NavLink>
                 <NavLink to="/class-registrations">Class Registrations</NavLink>
                 <NavLink to="/classes">Classes</NavLink>
+                <button onClick={handleReset} disabled={resetting}>
+                    {resetting ? 'Resetting...' : 'Reset Database'}
+                </button>
             </div>
         </nav>
     )
