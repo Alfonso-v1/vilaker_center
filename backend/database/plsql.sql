@@ -97,5 +97,32 @@ BEGIN
     ((SELECT member_id FROM Members WHERE first_name = 'Phoebe' AND last_name = 'Foster'), (SELECT class_id FROM Classes WHERE class_name = 'Learn 3D Printing'));
 
 END //
+    
+-- ##################
+-- DELETE MEMBER - KL
+-- ##################
+
+CREATE OR REPLACE PROCEDURE sp_delete_member(
+    IN button_member_id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member not deleted.' AS RESULT
+    END;
+
+    START TRANSACTION;
+
+    IF button_member_id IS NOT NULL THEN
+        DELETE FROM Members WHERE member_id = button_member;
+        COMMIT;
+        SELECT 'Success: member deleted.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: member does not exist' AS RESULT;
+    END IF;
+    
+END //
 
 DELIMITER ;
