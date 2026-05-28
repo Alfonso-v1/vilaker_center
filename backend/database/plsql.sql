@@ -103,28 +103,19 @@ END //
 -- ##################
 
 CREATE OR REPLACE PROCEDURE sp_delete_member(
-    IN p_first_name VARCHAR(255),
-    IN p_last_name VARCHAR(255),
-    IN p_email VARCHAR(255)
+    IN button_member_id INT
 )
 BEGIN
-    DECLARE find_member_id INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SELECT 'Error: member not deleted.' AS RESULT;
+        SELECT 'Error: member not deleted.' AS RESULT
     END;
 
     START TRANSACTION;
 
-    SELECT member_id INTO find_member_id FROM Members
-    WHERE first_name = p_first_name
-        AND last_name = p_last_name
-        AND email = p_email
-    LIMIT 1;
-
-    IF find_member_id IS NOT NULL THEN
-        DELETE FROM Members WHERE member_id = find_member_id;
+    IF button_member_id IS NOT NULL THEN
+        DELETE FROM Members WHERE member_id = button_member;
         COMMIT;
         SELECT 'Success: member deleted.' AS RESULT;
     ELSE
