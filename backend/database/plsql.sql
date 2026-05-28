@@ -125,4 +125,40 @@ BEGIN
     
 END //
 
+-- ####################################
+-- UPDATE RENTAL (return date) - KL
+-- 'LEAVE' syntax derived from Copilot
+-- ####################################
+
+CREATE OR REPLACE PROCEDURE sp_update_rental(
+    IN p_rental_id INT,
+    IN p_return_date DATE
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: rental not updated.' AS RESULT;
+    END;
+
+    IF p_rental_id IS NULL THEN
+        SELECT 'Error: rental not found.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_return_date IS NULL THEN
+        SELECT 'Error: please enter a returned date.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    UPDATE `Rentals` SET `returned_date` = p_return_date
+        WHERE `rental_id` = p_rental_id;
+
+    COMMIT;
+    SELECT 'Success: rental updated.' AS RESULT;
+
+END //
+
 DELIMITER ;
