@@ -171,6 +171,22 @@ app.post('/reset', async (req, res) => {
     }
 });
 
+app.post('/members/delete', async (req, res) => {
+    try {
+        let data = req.body;
+
+        const query1 = `CALL sp_delete_member(?);`;
+        await db.query(query1, [data.delete_member_id]);
+
+        console.log(`DELETE Members. ID: ${data.delete_member_id}`);
+
+        res.status(200).json({ message: 'Member deleted.' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).send('An error occured while executing the database queries. Please retry.');
+    };
+})
+
 // ########################################
 // ########## LISTENER
 
