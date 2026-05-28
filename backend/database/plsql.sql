@@ -108,6 +108,7 @@ CREATE OR REPLACE PROCEDURE sp_delete_member(
     IN p_email VARCHAR(255)
 )
 BEGIN
+    DECLARE find_member_id;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -116,17 +117,21 @@ BEGIN
 
     START TRANSACTION;
 
-    IF EXISTS (SELECT 1 FROM 'Members' WHERE 'member_id' = (SELECT member_id WHERE first_name = p_first_name AND last_name = p_last_name AND email = p_email))
-        DELETE FROM 'Members' WHERE 'member_id' = (SELECT member_id WHERE first_name = p_first_name AND last_name = p_last_name AND email = p_email);
-        COMMIT;
+    SELECT member_id INTO find_member_id FROM Members
+    WHERE first_name = p_first_name
+        AND last_name = p_last_name
+        AND email = p_email
+    LIMIT 1;
 
-        SELECT 'Success: member deleted.' AS RESULT
+    IF find_member_id IS NOT NULL THEN
+        DELETE FROM Members WHERE member_id = find_member_id;
+        COMMIT;
+        SELECT 'Success: member deleted.' AS RESULT;
     ELSE
         ROLLBACK;
-        SELECT 'Error: member not deleted.' AS RESULT
+        SELECT 'Error: member does not exist' AS RESULT:
     END IF;
     
-
 END //
 
 DELIMITER ;
