@@ -109,13 +109,13 @@ BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SELECT 'Error: member not deleted.' AS RESULT
+        SELECT 'Error: member not deleted.' AS RESULT;
     END;
 
     START TRANSACTION;
 
     IF button_member_id IS NOT NULL THEN
-        DELETE FROM Members WHERE member_id = button_member;
+        DELETE FROM Members WHERE member_id = button_member_id;
         COMMIT;
         SELECT 'Success: member deleted.' AS RESULT;
     ELSE
