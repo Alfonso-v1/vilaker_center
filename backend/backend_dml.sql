@@ -2,7 +2,8 @@
     Data Manipulation Queries for Project Group 21: Vilaker Community Center.
     Authored by Kylee Longaker
     Edited and Approved by Alfonso Vilchez
-    Last Edited: 5/14/2026 17:06
+    Last Edited: 5/27/2026 19:26
+    SQL Syntax assitance: Microsoft Copilot
 */
 
 -- User Interaction Denoted by & --
@@ -10,18 +11,31 @@
 --MemberTiers Page --
 
 /* SELECT (Display) MemberTiers Options */
-SELECT tier_name as Tier, price as 'Annual Fee', rental_discount * 100 as 'Rental Discount', 
-rental_period as 'Tool Rental Period (Days)'
+SELECT tier_name as 'Tier', price as 'Annual Fee', (rental_discount * 100) as 'Rental Discount', 
+    rental_period as 'Tool Rental Period (Days)'
 FROM MemberTiers;
 
 /* UPDATE option to adjust a current member's Member Tier.
         User must enter first name, last name, and email. */
-UPDATE Members SET membership_tier = &membership_tier_from_dropdown 
-WHERE member_id = (SELECT member_id FROM Members WHERE first_name = &first_name AND last_name = &last_name AND email = &email);
+UPDATE Members 
+SET membership_tier = &membership_tier_from_dropdown 
+WHERE first_name = &first_name 
+    AND last_name = &last_name 
+    AND email = &email;
 
 /* CREATE new tier */
-INSERT INTO MemberTiers (tier_name, price, rental_discount, rental_period)
-VALUES (&tier_name, &price, &rental_discount, &rental_period);
+INSERT INTO MemberTiers (
+    membership_tier, 
+    tier_name, 
+    price, 
+    rental_discount,
+    rental_period)
+VALUES (
+    &membership_tier,
+    &tier_name,
+    &price,
+    &rental_discount,
+    &rental_period);
 
 --End of MemberTiers Page--
 
@@ -32,20 +46,43 @@ VALUES (&tier_name, &price, &rental_discount, &rental_period);
 SELECT COUNT(member_id) as 'Number of Members' FROM Members;
 
 /* UPDATE member email address */
-UPDATE Members SET email = &email WHERE (SELECT member_id FROM Members WHERE first_name = &first_name AND last_name = &last_name);
+UPDATE Members 
+SET email = &email 
+WHERE first_name = &first_name 
+    AND last_name = &last_name;
 
 /* CREATE a new member */
-INSERT INTO Members (first_name, last_name, email, membership_tier)
-VALUES (&first_name, &last_name, &email, &membership_tier_from_dropdown);
+INSERT INTO Members (
+    first_name,
+    last_name,
+    email,
+    membership_tier)
+VALUES (
+    &first_name,
+    &last_name,
+    &email,
+    &membership_tier_from_dropdown);
 
 /* DELETE future class registrations for a member being deleted */
-DELETE FROM ClassRegistrations WHERE member_id = (SELECT member_id FROM Members WHERE 
-    first_name = &first_name AND last_name = &last_name AND email = &email)
-AND class_id IN (SELECT class_id FROM Classes WHERE end_date >= CURDATE());
+DELETE FROM ClassRegistrations WHERE member_id = (
+    SELECT member_id 
+    FROM Members 
+    WHERE first_name = &first_name 
+        AND last_name = &last_name 
+        AND email = &email 
+    LIMIT 1)
+AND class_id IN (
+    SELECT class_id 
+    FROM Classes 
+    WHERE end_date >= CURDATE());
 
 /* DELETE a member */
-DELETE FROM Members WHERE member_id = (SELECT member_id FROM Members WHERE email = &email AND last_name = &last_name
-AND first_name = &first_name);
+DELETE FROM Members 
+WHERE member_id = (
+    SELECT member_id FROM Members
+    WHERE email = &email 
+        AND last_name = &last_name
+        AND first_name = &first_name);
 
 --End of Members Page
 
@@ -59,23 +96,40 @@ capacity as Capacity, start_date as 'Begins On', end_date as 'Ends On'
 FROM Classes;
 
 /* CREATE new class */
-INSERT INTO Classes (instructor_name, class_name, description, capacity, start_date, end_date)
-VALUES (&instructor_name, &class_name, &description, &capacity, &start_date, &end_date);
+INSERT INTO Classes (
+    instructor_name,
+    class_name,
+    description, 
+    capacity,
+    start_date,
+    end_date)
+VALUES (
+    &instructor_name,
+    &class_name,
+    &description,
+    &capacity,
+    &start_date,
+    &end_date);
 
 /* UPDATE instructor for a course from the class name and start/end dates */
-UPDATE Classes SET instructor_name = &instructor_name 
-WHERE class_name = &class_name AND start_date = &start_date AND end_date = &end_date;
+UPDATE Classes SET instructor_name = &instructor_name
+WHERE class_name = &class_name 
+    AND start_date = &start_date 
+    AND end_date = &end_date;
 
 /* UPDATE start date and end date based on class name and instructor name */
 UPDATE Classes SET start_date = &start_date, end_date = &end_date
-WHERE class_name = &class_name AND instructor_name = &instructor_name
+WHERE class_name = &class_name 
+    AND instructor_name = &instructor_name;
 
 /* DELETE future registrations for a specific class name (in case class is no longer offered) */
-DELETE FROM ClassRegistrations WHERE class_id = (SELECT class_id FROM Classes WHERE 
-  class_name = &class_name AND end_date >= CURDATE())
+DELETE FROM ClassRegistrations WHERE class_id = (
+    SELECT class_id FROM Classes
+    WHERE class_name = &class_name 
+    AND end_date >= CURDATE());
 
 /* DELETE classes by a specific course name (in case course is not longer offered) */
-DELETE FROM Classes WHERE class_id = (SELECT class_id FROM Classes WHERE class_name = &class_name);
+DELETE FROM Classes WHERE class_name = &class_name;
 
 --End of Classes Page--
 
@@ -88,15 +142,26 @@ Tools.membership_tier as 'Minimum Required Tier', Tools.rental_fee as 'Rental Fe
 FROM Tools;
 
 /* UPDATE tool condition */
-UPDATE Tools SET condition = &condition WHERE tool_id = (SELECT tool_id FROM Tools WHERE name = &name)
+UPDATE Tools SET `condition` = &condition WHERE name = &name;
 
 /* CREATE new tool */
-INSERT INTO Tools (name, condition, membership_tier, rental_fee)
-VALUES (&name, &condition, (SELECT membership_tier FROM MemberTiers WHERE tier_name = &tier_name), &rental_fee);
+INSERT INTO Tools (
+    name,
+    `condition`,
+    membership_tier,
+    rental_fee)
+VALUES (
+    &name,
+    &condition,
+    (SELECT membership_tier FROM MemberTiers WHERE tier_name = &tier_name), 
+    &rental_fee);
 
 /* DELETE tool */
-DELETE FROM Tools WHERE tool_id = (SELECT tool_id FROM Tools WHERE name = &name AND
-    condition = &condition AND rental_fee = &rental_fee);
+DELETE FROM Tools WHERE tool_id = (
+    SELECT tool_id FROM Tools 
+    WHERE name = &name AND
+        `condition` = &condition 
+        AND rental_fee = &rental_fee);
 
 --End of Tools Page--
 
@@ -116,11 +181,11 @@ VALUES(
     --Today's Date (rental date)--
     CURDATE(),
     --Equation to calculate the due date from the member's tier allowment--
-    DATEADD(CURDATE(), 
+    DATE_ADD(CURDATE(), 
         INTERVAL 
             (SELECT rental_period FROM MemberTiers
             JOIN Members on MemberTiers.membership_tier = Members.membership_tier
-            WHERE Members.first_name = &first_name AND Members.last_name = &last_name) 
+            WHERE Members.first_name = &first_name AND Members.last_name = &last_name AND email = &email) 
         DAY),
     --Optional return date (if returned)--
     &returned_date,
@@ -158,11 +223,20 @@ VALUES ((SELECT member_id FROM Members WHERE last_name = &last_name AND email = 
         (SELECT class_id FROM Classes WHERE class_name = &class_name AND start_date = &start_date));
 
 /* UPDATE the class that's on the registration (not a realistic scenario) */
-UPDATE ClassRegistrations SET class_id = (SELECT class_id FROM Classes WHERE class_name = &class_name AND instructor = &instructor
-    AND start_date = &start_date AND end_date = &end_date) 
-WHERE class_id = ((SELECT class_id FROM Classes WHERE class_name = &class_name AND instructor = &instructor
-    AND start_date = &start_date AND end_date = &end_date)) AND member_id = (SELECT member_id FROM Members WHERE first_name = &first_name 
-    AND last_name = &last_name AND email = &email);
+UPDATE ClassRegistrations SET class_id = (
+    SELECT class_id FROM Classes 
+    WHERE class_name = &class_name AND instructor_name = &instructor_name
+        AND start_date = &start_date AND end_date = &end_date) 
+WHERE class_id = ((
+    SELECT class_id FROM Classes 
+    WHERE class_name = &class_name 
+        AND instructor_name = &instructor_name
+        AND start_date = &start_date AND end_date = &end_date)) 
+    AND member_id = (
+        SELECT member_id FROM Members 
+        WHERE first_name = &first_name 
+            AND last_name = &last_name 
+            AND email = &email);
 
 /* DELETE an instance of a registration */
 DELETE FROM ClassRegistrations WHERE member_id = (SELECT member_id FROM Members WHERE last_name = &last_name AND email = &email)
