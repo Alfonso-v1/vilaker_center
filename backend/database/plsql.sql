@@ -97,5 +97,36 @@ BEGIN
     ((SELECT member_id FROM Members WHERE first_name = 'Phoebe' AND last_name = 'Foster'), (SELECT class_id FROM Classes WHERE class_name = 'Learn 3D Printing'));
 
 END //
+    
+-- ##################
+-- DELETE MEMBER - KL
+-- ##################
+
+CREATE OR REPLACE PROCEDURE sp_delete_member(
+    IN p_first_name VARCHAR(255),
+    IN p_last_name VARCHAR(255),
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member not deleted.' AS RESULT
+    END;
+
+    START TRANSACTION;
+
+    IF EXISTS (SELECT 1 FROM 'Members' WHERE 'member_id' = (SELECT member_id WHERE first_name = p_first_name AND last_name = p_last_name AND email = p_email))
+        DELETE FROM 'Members' WHERE 'member_id' = (SELECT member_id WHERE first_name = p_first_name AND last_name = p_last_name AND email = p_email);
+        COMMIT;
+
+        SELECT 'Success: member deleted.' AS RESULT
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: member not deleted.' AS RESULT
+    END IF;
+    
+
+END //
 
 DELIMITER ;
