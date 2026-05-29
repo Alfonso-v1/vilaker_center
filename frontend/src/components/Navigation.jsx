@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import logo from "../assets/VLLC_logo.png"
 
 function Navigation({ backendURL }) {
 
@@ -21,6 +22,7 @@ function Navigation({ backendURL }) {
 
     return (
         <nav>
+            <img src={logo} alt='Vilaker Lifelong Learning Center Logo' />
             <div className="nav-links">
                 <NavLink to="/">Home</NavLink>
                 <NavLink to="/members">Members</NavLink>
