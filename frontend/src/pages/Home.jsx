@@ -1,12 +1,49 @@
+import { Link } from "react-router-dom";
+import membership from '../assets/membership.jpg';
+import pottery from '../assets/pottery-class.jpg';
+import rentals from '../assets/tool-rental.jpg';
+
+
 function Home() {
   return (
     <div>
-      <h1>Welcome to the Vilaker Lifelong Learning Center</h1>
 
-      <p>The Vilaker Lifelong Learning Center is a local community center in a mid-sized town that offers
-        life-skills courses and tool rentals to over 2,500 members a year. The center offers rentals on
-        their catalog of 300 various hand and power tools plus registration for their 75 life-skills courses
-        held annually.</p>
+      <main className="home">
+        <section className="home-intro">
+          <h1>Vilaker Lifelong Learning Center</h1>
+
+          <p>
+            Borrow tools, take hands-on classes, and learn useful life skills with your community.
+          </p>
+        </section>
+
+        <section className="home-card-grid">
+
+          <Link to='/classes' className="image-card">
+            <img src={pottery} alt='Pottery Class' />
+            <div className="image-card-text">
+              <h2>Want to Learn a new skill?</h2>
+              <p>Check out our upcoming classes.</p>
+            </div>
+          </Link>
+
+          <Link to='/tools' className="image-card">
+            <img src={rentals} alt='Tool wall' />
+            <div className="image-card-text">
+              <h2>Need tools for a project?</h2>
+              <p>View our tool library catalog.</p>
+            </div>
+          </Link>
+
+          <Link to='/member-tiers' className="image-card">
+            <img src={membership} alt='Group of people' />
+            <div className="image-card-text">
+              <h2>Want to join the center?</h2>
+              <p>Learn more about our membership tiers.</p>
+            </div>
+          </Link>
+        </section>
+      </main>
       
     </div>
   );

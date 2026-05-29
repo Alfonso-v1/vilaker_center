@@ -21,20 +21,27 @@ function Navigation({ backendURL }) {
     };
 
     return (
-        <nav>
-            <img src={logo} alt='Vilaker Lifelong Learning Center Logo' />
-            <div className="nav-links">
-                <NavLink to="/">Home</NavLink>
-                <NavLink to="/members">Members</NavLink>
-                <NavLink to="/member-tiers">Member Tiers</NavLink>
-                <NavLink to="/tools">Tools</NavLink>
-                <NavLink to="/rentals">Rentals</NavLink>
-                <NavLink to="/class-registrations">Class Registrations</NavLink>
-                <NavLink to="/classes">Classes</NavLink>
-                <button onClick={handleReset} disabled={resetting}>
+        <header className="site-header">
+            <nav className="main-nav">
+                <NavLink to="/" className="logo-link">
+                    <img src={logo} alt='Vilaker Lifelong Learning Center Logo' />
+                </NavLink>
+                <div className="nav-links">
+                    <NavLink to="/">Home</NavLink>
+                    <NavLink to="/members">Members</NavLink>
+                    <NavLink to="/member-tiers">Member Tiers</NavLink>
+                    <NavLink to="/tools">Tool Library</NavLink>
+                    <NavLink to="/classes">Classes</NavLink>
+                    <NavLink to="/class-registrations">Class Registrations</NavLink>
+                    <NavLink to="/rentals">Rentals</NavLink>
+                    
+                </div>
+                <button className="nav-button" onClick={handleReset} disabled={resetting}>
                     {resetting ? 'Resetting...' : 'Reset Database'}
                 </button>
-            </div>
-        </nav>
+            </nav>
+        </header>
     )
-} export default Navigation;
+}
+
+export default Navigation;
