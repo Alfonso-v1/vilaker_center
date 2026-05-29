@@ -187,6 +187,40 @@ app.post('/members/delete', async (req, res) => {
     };
 })
 
+app.post('/rentals/update', async (req, res) => {
+    try {
+        const data = req.body;
+
+        if (isNaN(parseInt(data.update_rental_id))) {
+            data.update_rental_id = null;
+        }
+
+        if (!data.update_return_date) {
+            data.update_return_date = null;
+        }
+
+        const query1 = `CALL sp_update_rental(?, ?)`
+
+        const [result] = await db.query(query1, [
+            data.update_rental_id,
+            data.update_return_date
+        ]);
+
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `UPDATE rental. ID: ${data.update_rental_id}, ` +
+            `Returned Date: ${data.update_return_date}, ` +
+            `Result: ${procedureMessage}`
+        );
+
+        res.status(200).json({ message: procedureMessage });
+    } catch (error) {
+        console.error('Error updating rental:', error);
+        res.status(500).send('An error occurred while updating the rental.');
+    }
+})
+
 // ########################################
 // ########## LISTENER
 
