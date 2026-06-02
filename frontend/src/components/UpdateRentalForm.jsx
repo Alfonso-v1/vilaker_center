@@ -1,3 +1,7 @@
+/* 
+This module was adapted from starter code.
+*/
+
 import React, { useState } from 'react';
 
 const UpdateRentalForm = ({ rentalData, backendURL, refresh, onClose }) => {

@@ -5,8 +5,8 @@ const TableRow = ({ rowObject, backendURL, refresh, onEdit, onDelete }) => {
                 <td key={index}>{value}</td>
             ))}
             <td>
-                <button type='button' onClick={() => onDelete(rowObject)}>Delete</button>
-                <button type='button' onClick={() => onEdit(rowObject)}>Update</button>
+                <button type='button' className="delete-button" onClick={() => onDelete(rowObject)}>Delete</button>
+                <button type='button' className="update-button" onClick={() => onEdit(rowObject)}>Update</button>
             </td>
         </tr>
     );

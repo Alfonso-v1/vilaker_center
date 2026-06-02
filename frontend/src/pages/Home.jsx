@@ -1,3 +1,12 @@
+/*
+CITATION FOR: Modal styling
+Date: 5/28/26
+Adapted From: Claude
+Originality: Claude helped with design of the home cards.
+Source URL: https://claude.ai/chat/
+Summary of Prompts: Claude was prompted to aid designing home cards that would be kept at equal sizing and allow links.
+*/
+
 import { Link } from "react-router-dom";
 import membership from '../assets/membership.jpg';
 import pottery from '../assets/pottery-class.jpg';

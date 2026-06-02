@@ -5,7 +5,7 @@ Adapted From: Claude
 Originality: Claude designed the styling with some changes to sizing and colors from myself.
 Source URL: https://claude.ai/chat/
 Summary of Prompts: Claude was prompted to aid with styling that would allow the Manage Registration Modal to pop
-  in front of the background page.
+  in front of the background page. Also aided in design of the home page.
 */
 
 body {
@@ -166,14 +166,16 @@ h2 {
 }
 
 p {
-  margin: 0 0 16px;
+  margin: 0 auto 16px;
   line-height: 1.5;
+  padding: 0 24px;
 }
 
 table {
-  width: 100%;
+  width: 90%;
+  max-width: 2500px;
+  margin: 0 auto 24px;
   border-collapse: collapse;
-  margin-bottom: 24px;
 }
 
 th, td {
@@ -189,6 +191,22 @@ thead tr {
 
 tbody tr:hover{
   background-color: lightgray;
+}
+
+td button.delete-button {
+  background-color: #ff0000;
+}
+
+td button.delete-button:hover {
+  background-color: #cc0000;
+}
+
+td button.update-button {
+  background-color: #2f7f88;
+}
+
+td button.update-button:hover {
+  background-color: #245f66;
 }
 
 .cuForm {
@@ -226,20 +244,19 @@ td button {
   padding: 4px 10px;
   cursor: pointer;
   border: 1px solid darkgray;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  font-size: 14px;
-}
-
-td button:hover{
-  background-color: darkslategray;
   color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 8px;
 }
 
 .forms {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
+  margin: 0 auto 32px;
+  padding: 24px;
 }
 
 .forms > div {
@@ -320,4 +337,57 @@ td button:hover{
 
 .modal-panel button[onClick] {
   margin-top: 1rem;
+}
+
+.add-member-section {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 32px;
+}
+
+.add-member-row input,
+.add-member-row select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.add-member-button,
+.save-button,
+.cancel-button {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.add-member-button {
+  background-color: #2f7f88;
+  color: white;
+}
+
+.add-member-button:hover {
+  background-color: #245f66;
+}
+
+.save-button {
+  background-color: #2f7f88;
+}
+
+.save-button:hover {
+  background-color: #245f66;
+}
+
+.cancel-button {
+  background-color: #666;
+}
+
+.cancel-button:hover {
+  background-color: #444;
 }

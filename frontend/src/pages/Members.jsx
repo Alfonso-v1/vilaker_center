@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
+import AddMemberRow from "../components/AddMemberRow";
 import CreateMemberForm from "../components/CreateMemberForm";
 import UpdateMemberForm from "../components/UpdateMemberForm";
 import DeleteMemberForm from "../components/DeleteMemberForm";
@@ -10,6 +11,7 @@ function Members({ backendURL }) {
   const [memberTiers, setMemberTiers] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [deletingMember, setDeletingMember] = useState(null);
+  const [addingMember, setAddingMember] = useState(false);
 
   const getData = async function () {
     try {
@@ -47,9 +49,16 @@ function Members({ backendURL }) {
                     {members.map((member, index) => (
                       <TableRow key={index} rowObject={member} backendURL={backendURL} refresh={getData} onEdit={setEditingRow} onDelete={setDeletingMember} />
                     ))}
+          
+                  {addingMember &&
+                    <AddMemberRow memberTiers={memberTiers} backendURL={backendURL} refreshMembers={getData} onCancel={() => setAddingMember(false)} />
+                  }
 
                 </tbody>
       </table>
+      <div className="add-member-section">
+        <button type='button' className="add-member-button" onClick={() => setAddingMember(true)}>Add Member</button>
+      </div>
 
       {editingRow &&
         <div className="modal-overlay" onClick={() => setEditingRow(null)}>
