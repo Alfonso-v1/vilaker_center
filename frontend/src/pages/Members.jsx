@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"; // Importing useState for managing state in the component
 import TableRow from "../components/TableRow";
 import AddMemberRow from "../components/AddMemberRow";
-import CreateMemberForm from "../components/CreateMemberForm";
 import UpdateMemberForm from "../components/UpdateMemberForm";
 import DeleteMemberForm from "../components/DeleteMemberForm";
 
@@ -38,7 +37,9 @@ function Members({ backendURL }) {
       <table>
                 <thead>
                     <tr>
-                        {members.length > 0 && Object.keys(members[0]).map((header, index) => (
+            {members.length > 0 && Object.keys(members[0])
+                          .filter((header) => header != 'Membership Tier ID')
+                          .map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
                         <th>Actions</th>
@@ -46,9 +47,14 @@ function Members({ backendURL }) {
                 </thead>
 
                 <tbody>
-                    {members.map((member, index) => (
-                      <TableRow key={index} rowObject={member} backendURL={backendURL} refresh={getData} onEdit={setEditingRow} onDelete={setDeletingMember} />
-                    ))}
+                  {members.map((member, index) => {
+                    const displayMember = { ...member };
+                    delete displayMember['Membership Tier ID'];
+                            
+                    return (
+                      <TableRow key={index} rowObject={displayMember} backendURL={backendURL} refresh={getData} onEdit={() => setEditingRow(member)} onDelete={setDeletingMember} />
+                    )
+                  })}
           
                   {addingMember &&
                     <AddMemberRow memberTiers={memberTiers} backendURL={backendURL} refreshMembers={getData} onCancel={() => setAddingMember(false)} />
@@ -63,7 +69,7 @@ function Members({ backendURL }) {
       {editingRow &&
         <div className="modal-overlay" onClick={() => setEditingRow(null)}>
           <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-
+            <UpdateMemberForm memberData={editingRow} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} onClose={() => setEditingRow(null)} />
           </div>
         </div>
       }
@@ -75,11 +81,6 @@ function Members({ backendURL }) {
           </div>
         </div>
       }
-
-      <div className="forms">
-        <CreateMemberForm memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
-        <UpdateMemberForm members={members} memberTiers={memberTiers} backendURL={backendURL} refresh={getData} />
-      </div>
     </div>
   );
 }

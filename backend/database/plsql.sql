@@ -25,9 +25,9 @@ BEGIN
 
     INSERT INTO MemberTiers (membership_tier, tier_name, price, rental_discount, rental_period)
     VALUES
-    (1, 'free', 0.00, 0.0, 3),
-    (2, 'basic', 24.99, 0.5, 7), 
-    (3, 'pro', 49.99, 1.0, 14);
+    (1, 'Free', 0.00, 0.0, 3),
+    (2, 'Basic', 24.99, 0.5, 7), 
+    (3, 'Pro', 49.99, 1.0, 14);
 
     -- ########################
     -- MEMBERS SAMPLE DATA
