@@ -19,8 +19,8 @@ const DeleteMemberForm = ({ memberData, backendURL, refresh, onClose }) => {
             <h2>Delete Member?</h2>
             <p>Member ID: {memberData['Member ID']}</p>
             <p>Name: {memberData['First Name'] + ' ' + memberData['Last Name']}</p>
-            <button type='button' onClick={handleDelete}>Delete</button>
-            <button type='button' onClick={onClose}>Cancel</button>
+            <button type='button' className="confirm-delete-button" onClick={handleDelete}>Delete</button>
+            <button type='button' className="cancel-button" onClick={onClose}>Cancel</button>
         </div>
     );
 };

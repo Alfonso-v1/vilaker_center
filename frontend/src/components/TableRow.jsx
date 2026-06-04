@@ -1,13 +1,23 @@
-const TableRow = ({ rowObject, backendURL, refresh, onEdit, onDelete }) => {
+const TableRow = ({ rowObject, backendURL, refresh, onEdit, onDelete, showUpdate = true, showDelete = true }) => {
+
     return (
         <tr>
             {Object.values(rowObject).map((value, index) => (
                 <td key={index}>{value}</td>
             ))}
-            <td>
-                <button type='button' className="delete-button" onClick={() => onDelete(rowObject)}>Delete</button>
-                <button type='button' className="update-button" onClick={() => onEdit(rowObject)}>Update</button>
-            </td>
+            {(showUpdate || showDelete) && (
+              <td>
+                {showUpdate && (
+                    <button type='button' className="update-button" onClick={() => onEdit(rowForActions)}>Update</button>
+                )}
+                
+                {showDelete && (
+                    <button type='button' className="delete-button" onClick={() => onDelete(rowForActions)}>Delete</button>
+                )}
+                
+            </td>  
+            )}
+            
         </tr>
     );
 };

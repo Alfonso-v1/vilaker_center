@@ -48,12 +48,12 @@ BEGIN
 
     INSERT INTO Tools (name, `condition`, membership_tier, rental_fee)
     VALUES
-    ('cordless drill', 'excellent', 1, 10.00),
-    ('socket wrench set', 'fair', 1, 15.00),
-    ('circular saw', 'good', 2, 20.00),
-    ('shop vac', 'excellent', 2, 25.00),
-    ('sewing machine', 'good', 3, 35.00),
-    ('pressure washer', 'fair', 3, 50.00);
+    ('Cordless Drill', 'Excellent', 1, 10.00),
+    ('Socket Wrench Set', 'Fair', 1, 15.00),
+    ('Circular Saw', 'Good', 2, 20.00),
+    ('Shop Vac', 'Excellent', 2, 25.00),
+    ('Sewing Machine', 'Good', 3, 35.00),
+    ('Pressure Washer', 'Fair', 3, 50.00);
 
     -- ########################
     -- RENTALS SAMPLE DATA

@@ -44,7 +44,7 @@ function Rentals({ backendURL }) {
 
                 <tbody>
                     {rentals.map((rental, index) => (
-                      <TableRow key={index} rowObject={rental} backendURL={backendURL} refresh={getData} onEdit={setEditingRow}/>
+                      <TableRow key={index} rowObject={rental} backendURL={backendURL} refresh={getData} onEdit={setEditingRow} showDelete={false} />
                     ))}
 
                 </tbody>

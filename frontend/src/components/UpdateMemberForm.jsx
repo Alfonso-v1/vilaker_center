@@ -94,7 +94,7 @@ const UpdateMemberForm = ({ memberData, memberTiers, backendURL, refresh, onClos
                 
                 <input type="submit" value="Update Member" />
 
-                <button type="button" onClick={onClose}>Cancel</button>
+                <button type="button" className="cancel-button" onClick={onClose}>Cancel</button>
             </form>
 
         </div>

@@ -19,7 +19,6 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState('');
     const [registrations, setRegistrations] = useState([]);
-    const [editingRegistration, setEditingRegistration] = useState(null);
     const [newClassId, setNewClassId] = useState('');
 
     useEffect(() => {
@@ -64,7 +63,7 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
                                             {Object.keys(registrations[0]).map((header, index) => (
                                                 <th key={index}>{header}</th>
                                             ))}
-                                            <th></th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -73,26 +72,13 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
                                             const res = await fetch(`${backendURL}/memberRegistrations/${selectedMember}`);
                                             const data = await res.json();
                                             setRegistrations(data.registrations)
-                                        }} onEdit={setEditingRegistration} />
+                                        }} showUpdate={false} />
                                         ))}
                                     </tbody>
                             </table>
                         }
                         {selectedMember && registrations.length === 0 && (
                             <p>No registrations found for this member.</p>
-                        )}
-                        {editingRegistration && (
-                            <div>
-                                <label>Change Registered Class: </label>
-                                <select value={newClassId} onChange={(e) => setNewClassId(e.target.value)}>
-                                    <option value=''>Select a Class</option>
-                                    {classes.map((oneClass) => (
-                                        <option key={oneClass.class_id} value={oneClass.class_id}>{oneClass.class_name}</option>
-                                    ))}
-                                </select>
-                                <button type='button' onClick={() => { setEditingRegistration(null); setNewClassId(''); } }>Cancel</button>
-                                <button type='button'>Save</button>
-                            </div>
                         )}
                         {selectedMember &&
                             <CreateClassRegistrationForm classes={classes} member_id={selectedMember} backendURL={backendURL} refresh={async () => {

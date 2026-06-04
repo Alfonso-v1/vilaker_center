@@ -8,6 +8,8 @@ function ClassRegistrations({ backendURL }) {
   const [classes, setClasses] = useState([]);
   const [members, setMembers] = useState([]);
 
+  const showActions = false;
+
   const getData = async function () {
     try {
 
@@ -37,13 +39,13 @@ function ClassRegistrations({ backendURL }) {
                         {classRegistrations.length > 0 && Object.keys(classRegistrations[0]).map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
-                        <th>Actions</th>
+                        {showActions && <th>Actions</th>}
                     </tr>
                 </thead>
 
                 <tbody>
                     {classRegistrations.map((registration, index) => (
-                      <TableRow key={index} rowObject={registration} backendURL={backendURL} refresh={getData} />
+                      <TableRow key={index} rowObject={registration} backendURL={backendURL} refresh={getData} showUpdate={false} showDelete={false} />
                     ))}
 
                 </tbody>

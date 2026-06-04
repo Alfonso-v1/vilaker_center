@@ -39,7 +39,7 @@ function MemberTiers({ backendURL }) {
 
                 <tbody>
                     {memberTiers.map((tier, index) => (
-                      <TableRow key={index} rowObject={tier} backendURL={backendURL} refresh={getData} />
+                      <TableRow key={index} rowObject={tier} backendURL={backendURL} refresh={getData} showDelete={false} />
                     ))}
 
                 </tbody>
