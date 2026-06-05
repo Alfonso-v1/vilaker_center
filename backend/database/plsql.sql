@@ -224,6 +224,57 @@ BEGIN
     END IF;
 END //
 
+/* Stored Procedured for Member Tiers Page */
+
+DROP PROCEDURE IF EXISTS sp_update_membertiers;
+
+CREATE PROCEDURE sp_update_membertiers(
+    IN button_member_tier TINYINT(1),
+    IN p_price DECIMAL(10, 2),
+    IN p_discount DECIMAL(2, 1),
+    IN p_retnal_period INT
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member tier not updated.' AS RESULT;
+    END;
+
+    IF p_retnal_period IS NULL THEN
+        SELECT 'ERROR Please specify a rental period.' AS RESULT; 
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    IF p_price IS NULL OR p_price = 0 THEN
+        UPDATE `MemberTiers`
+        SET `price` = 0
+        WHERE `membership_tier` = button_member_tier;
+    ELSE
+        UPDATE `MemberTiers`
+        SET `price` = p_price
+        WHERE `membership_tier` = button_member_tier;
+    END IF;
+
+    IF p_discount IS NULL OR p_discount = 0 THEN
+        UPDATE `MemberTiers`
+        SET `rental_discount` = 0
+        WHERE `membership_tier` = button_member_tier;
+    ELSE
+        UPDATE `MemberTiers`
+        SET `rental_discount` = p_discount
+        WHERE `membership_tier` = button_member_tier;
+    END IF;
+
+    UPDATE `MemberTiers` SET `rental_period` = p_retnal_period WHERE `membership_tier` = button_member_tier;
+    COMMIT; 
+
+    SELECT 'Success: tier updated.' AS RESULT;
+
+END //
+
 -- ####################################
 -- UPDATE RENTAL (return date) - KL
 -- 'LEAVE' syntax derived from Copilot
