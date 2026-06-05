@@ -98,11 +98,111 @@ BEGIN
 
 END //
     
+/* Stored Procedures for Members Page */
+
+DROP PROCEDURE IF EXISTS sp_create_member;
+DROP PROCEDURE IF EXISTS sp_update_member;
+DROP PROCEDURE IF EXISTS sp_delete_member;
+
+-- ##################
+-- CREATE MEMBER - KL
+-- ##################
+
+CREATE PROCEDURE sp_create_member(
+    IN p_first_name VARCHAR(50),
+    IN p_last_name VARCHAR(50),
+    IN p_email VARCHAR(100),
+    IN p_membership_tier TINYINT(1)
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member not created.' AS RESULT;
+    END;
+
+    IF p_first_name IS NULL THEN
+        SELECT 'Error: no first name entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_last_name IS NULL THEN
+        SELECT 'Error: no last name entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_email IS NULL THEN
+        SELECT 'Error: no email address entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_membership_tier IS NULL THEN
+        SET p_membership_tier = 0;
+    END IF;
+    
+    START TRANSACTION;
+
+    INSERT INTO `Members`(
+        first_name,
+        last_name,
+        email,
+        membership_tier
+    )
+    VALUES (
+        p_first_name,
+        p_last_name,
+        p_email,
+        p_membership_tier
+    );
+
+    COMMIT;
+    SELECT LAST_INSERT_ID() AS member_id;
+    SELECT 'Success: member created.' AS RESULT;
+END proc //
+
+-- ##################
+-- UPDATE MEMBER - KL
+-- ##################
+
+CREATE PROCEDURE sp_update_member(
+    IN p_member_id INT,
+    IN p_email VARCHAR(100),
+    IN p_membership_tier TINYINT(1)
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member not updated.' AS RESULT;
+    END;
+
+    IF (p_email IS NULL AND p_membership_tier IS NULL) OR p_member_id IS NULL THEN
+        SELECT "Error: no updates selected." AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    IF p_email IS NOT NULL THEN
+        UPDATE `Members` SET `email` = p_email
+            WHERE `member_id` = p_member_id;
+    END IF;
+
+    IF p_membership_tier IS NOT NULL THEN
+        UPDATE `Members` SET `membership_tier` = p_membership_tier
+            WHERE `member_id` = p_member_id;
+    END IF;
+
+    COMMIT;
+
+    SELECT "Success: member updated." AS RESULT;
+END proc //
+
 -- ##################
 -- DELETE MEMBER - KL
 -- ##################
 
-CREATE OR REPLACE PROCEDURE sp_delete_member(
+CREATE PROCEDURE sp_delete_member(
     IN button_member_id INT
 )
 BEGIN
@@ -122,7 +222,57 @@ BEGIN
         ROLLBACK;
         SELECT 'Error: member does not exist' AS RESULT;
     END IF;
-    
+END //
+
+/* Stored Procedured for Member Tiers Page */
+
+DROP PROCEDURE IF EXISTS sp_update_membertiers;
+
+CREATE PROCEDURE sp_update_membertiers(
+    IN button_member_tier TINYINT(1),
+    IN p_price DECIMAL(10, 2),
+    IN p_discount DECIMAL(2, 1),
+    IN p_retnal_period INT
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: member tier not updated.' AS RESULT;
+    END;
+
+    IF p_retnal_period IS NULL THEN
+        SELECT 'ERROR Please specify a rental period.' AS RESULT; 
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    IF p_price IS NULL OR p_price = 0 THEN
+        UPDATE `MemberTiers`
+        SET `price` = 0
+        WHERE `membership_tier` = button_member_tier;
+    ELSE
+        UPDATE `MemberTiers`
+        SET `price` = p_price
+        WHERE `membership_tier` = button_member_tier;
+    END IF;
+
+    IF p_discount IS NULL OR p_discount = 0 THEN
+        UPDATE `MemberTiers`
+        SET `rental_discount` = 0
+        WHERE `membership_tier` = button_member_tier;
+    ELSE
+        UPDATE `MemberTiers`
+        SET `rental_discount` = p_discount
+        WHERE `membership_tier` = button_member_tier;
+    END IF;
+
+    UPDATE `MemberTiers` SET `rental_period` = p_retnal_period WHERE `membership_tier` = button_member_tier;
+    COMMIT; 
+
+    SELECT 'Success: tier updated.' AS RESULT;
+
 END //
 
 -- ####################################
