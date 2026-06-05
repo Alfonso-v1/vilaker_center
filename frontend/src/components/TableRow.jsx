@@ -8,11 +8,11 @@ const TableRow = ({ rowObject, backendURL, refresh, onEdit, onDelete, showUpdate
             {(showUpdate || showDelete) && (
               <td>
                 {showUpdate && (
-                    <button type='button' className="update-button" onClick={() => onEdit(rowForActions)}>Update</button>
+                    <button type='button' className="update-button" onClick={() => onEdit(rowObject)}>Update</button>
                 )}
                 
                 {showDelete && (
-                    <button type='button' className="delete-button" onClick={() => onDelete(rowForActions)}>Delete</button>
+                    <button type='button' className="delete-button" onClick={() => onDelete(rowObject)}>Delete</button>
                 )}
                 
             </td>  

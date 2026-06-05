@@ -49,7 +49,9 @@ app.get('/members', async (req, res) => {
 app.get('/memberTiers', async (req, res) => {
     try {
         const query1 = `SELECT 
-            tier_name as Tier, price as 'Annual Fee',
+            membership_tier as 'Membership Tier ID',
+            tier_name as Tier,
+            price as 'Annual Fee',
             CONCAT(FORMAT(rental_discount * 100, 0), '%') as 'Rental Discount',
             rental_period as 'Tool Rental Period (Days)'
             FROM MemberTiers;`;
