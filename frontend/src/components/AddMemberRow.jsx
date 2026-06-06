@@ -28,7 +28,7 @@ const AddMemberRow = ({ memberTiers, backendURL, refreshMembers, onCancel }) => 
             if (response.ok) {
                 console.log('Member created successfully');
                 refreshMembers();
-                onCancel;
+                onCancel();
             } else {
                 console.log('Error creating member.');
             }

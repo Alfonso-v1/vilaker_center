@@ -121,17 +121,17 @@ proc: BEGIN
         SELECT 'Error: member not created.' AS RESULT;
     END;
 
-    IF p_first_name IS NULL THEN
+    IF p_first_name IS NULL OR p_first_name = '' THEN
         SELECT 'Error: no first name entered.' AS RESULT;
         LEAVE proc;
     END IF;
 
-    IF p_last_name IS NULL THEN
+    IF p_last_name IS NULL OR p_last_name = '' THEN
         SELECT 'Error: no last name entered.' AS RESULT;
         LEAVE proc;
     END IF;
 
-    IF p_email IS NULL THEN
+    IF p_email IS NULL OR p_email = '' THEN
         SELECT 'Error: no email address entered.' AS RESULT;
         LEAVE proc;
     END IF;
@@ -156,8 +156,9 @@ proc: BEGIN
     );
 
     COMMIT;
-    SELECT LAST_INSERT_ID() AS member_id;
-    SELECT 'Success: member created.' AS RESULT;
+    SELECT 
+        LAST_INSERT_ID() AS member_id,
+        'Success: member created.' AS RESULT;
 END proc //
 
 -- ##################
@@ -166,6 +167,8 @@ END proc //
 
 CREATE PROCEDURE sp_update_member(
     IN p_member_id INT,
+    IN p_first_name VARCHAR(50),
+    IN p_last_name VARCHAR(50),
     IN p_email VARCHAR(100),
     IN p_membership_tier TINYINT(1)
 )
@@ -176,12 +179,22 @@ proc: BEGIN
         SELECT 'Error: member not updated.' AS RESULT;
     END;
 
-    IF (p_email IS NULL AND p_membership_tier IS NULL) OR p_member_id IS NULL THEN
+    IF (p_first_name IS NULL AND p_last_name IS NULL AND p_email IS NULL AND p_membership_tier IS NULL) OR p_member_id IS NULL THEN
         SELECT "Error: no updates selected." AS RESULT;
         LEAVE proc;
     END IF;
 
     START TRANSACTION;
+
+    IF p_first_name IS NOT NULL THEN
+        UPDATE `Members` SET `first_name` = p_first_name
+            WHERE `member_id` = p_member_id;
+    END IF;
+
+    IF p_last_name IS NOT NULL THEN
+        UPDATE `Members` SET `last_name` = p_last_name
+            WHERE `member_id` = p_member_id;
+    END IF;
 
     IF p_email IS NOT NULL THEN
         UPDATE `Members` SET `email` = p_email
@@ -232,7 +245,7 @@ CREATE PROCEDURE sp_update_membertiers(
     IN button_member_tier TINYINT(1),
     IN p_price DECIMAL(10, 2),
     IN p_discount DECIMAL(2, 1),
-    IN p_retnal_period INT
+    IN p_rental_period INT
 )
 proc: BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -241,7 +254,7 @@ proc: BEGIN
         SELECT 'Error: member tier not updated.' AS RESULT;
     END;
 
-    IF p_retnal_period IS NULL THEN
+    IF p_rental_period IS NULL THEN
         SELECT 'ERROR Please specify a rental period.' AS RESULT; 
         LEAVE proc;
     END IF;
@@ -268,7 +281,7 @@ proc: BEGIN
         WHERE `membership_tier` = button_member_tier;
     END IF;
 
-    UPDATE `MemberTiers` SET `rental_period` = p_retnal_period WHERE `membership_tier` = button_member_tier;
+    UPDATE `MemberTiers` SET `rental_period` = p_rental_period WHERE `membership_tier` = button_member_tier;
     COMMIT; 
 
     SELECT 'Success: tier updated.' AS RESULT;

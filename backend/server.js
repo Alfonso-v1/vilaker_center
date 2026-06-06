@@ -237,6 +237,62 @@ app.post('/rentals/update', async (req, res) => {
     }
 })
 
+app.post('/members/create', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_create_member(?, ?, ?, ?)`;
+
+        const [result] = await db.query(query1, [
+            data.first_name,
+            data.last_name,
+            data.email,
+            data.membership_tier
+        ]);
+        
+        const createdMemberId = result[0][0].member_id;
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `CREATE member. ID: ${createdMemberId}, ` +
+            `Result: ${procedureMessage}`
+        );
+
+        res.status(200).json({ message: procedureMessage });
+    } catch (error) {
+        console.error( 'Error creating member', error );
+        res.status(500).send('An error occured while creating the member.');
+    }
+})
+
+app.post('/members/update', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_update_member(?, ?, ?, ?, ?);`;
+
+        const [result] = await db.query(query1, [
+            data.update_member_id,
+            data.update_member_first_name,
+            data.update_member_last_name,
+            data.update_member_email,
+            data.update_member_tier
+        ]);
+
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `UPDATE member. ID: ${data.update_member_id}, ` +
+            `Result: ${procedureMessage}`
+        );
+
+        res.status(200).json({ message: procedureMessage });
+    } catch (error) {
+        console.error('Error updating member', error); 
+        res.status(500).send('An error occured while updating member.');
+    }
+})
+
 // ########################################
 // ########## LISTENER
 
