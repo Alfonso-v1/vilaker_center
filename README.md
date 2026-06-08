@@ -12,3 +12,9 @@ A full-stack web app for managing a community tool lending center.
     Source URL: https://claude.ai/chat/
     Summary of Prompts: Claude was instructed to help with design of a pop-up modal that would allow the user to view a table of registrations for a selected member. Claude gave the framework such as div structure and open/close functionality as well as styling. The components inside the modal were designed by myself.
 
+## CITATION FOR: Methods in Stored Procedures
+    Date: 6/8/26
+    Adapted From: Microsoft Copilot
+    Originality: Methods LEAVE, LAST_INSERT_ID(), and ROW_COUNT() introduced and explained by Copilot
+    Source URL: https://copilot.microsoft.com/
+    Summary of Prompts: Copilot was asked for the most efficient way of interrupting procedures, assigning primary keys, and recoginzing changes made in the table. Copilot provided the syntax for all three functions mentioned above, and further debugging for roadblocks and misunderstandings. The implementation of said functions and attributes inside of them was done by myself (Kylee). 
