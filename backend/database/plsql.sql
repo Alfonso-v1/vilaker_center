@@ -98,15 +98,17 @@ BEGIN
 
 END //
     
-/* Stored Procedures for Members Page */
+/* Stored Procedured for Members Page */
 
 DROP PROCEDURE IF EXISTS sp_create_member;
 DROP PROCEDURE IF EXISTS sp_update_member;
 DROP PROCEDURE IF EXISTS sp_delete_member;
 
--- ##################
--- CREATE MEMBER - KL
--- ##################
+DELIMITER //
+
+-- #############
+-- CREATE MEMBER
+-- #############
 
 CREATE PROCEDURE sp_create_member(
     IN p_first_name VARCHAR(50),
@@ -121,32 +123,29 @@ proc: BEGIN
         SELECT 'Error: member not created.' AS RESULT;
     END;
 
-    IF p_first_name IS NULL OR p_first_name = '' THEN
+    -- Input Validation --
+    IF p_first_name IS NULL THEN
         SELECT 'Error: no first name entered.' AS RESULT;
         LEAVE proc;
-    END IF;
-
-    IF p_last_name IS NULL OR p_last_name = '' THEN
+    ELSEIF p_last_name IS NULL THEN
         SELECT 'Error: no last name entered.' AS RESULT;
         LEAVE proc;
-    END IF;
-
-    IF p_email IS NULL OR p_email = '' THEN
+    ELSEIF p_email IS NULL THEN
         SELECT 'Error: no email address entered.' AS RESULT;
         LEAVE proc;
+    ELSEIF p_membership_tier IS NULL THEN
+        SELECT 'Error: no membership tier entered' AS RESULT;
+        LEAVE proc;
     END IF;
-
-    IF p_membership_tier IS NULL THEN
-        SET p_membership_tier = 0;
-    END IF;
+    -- End of Input Valdiation --
     
     START TRANSACTION;
 
     INSERT INTO `Members`(
-        first_name,
-        last_name,
-        email,
-        membership_tier
+        `first_name`,
+        `last_name`,
+        `email`,
+        `membership_tier`
     )
     VALUES (
         p_first_name,
@@ -155,20 +154,23 @@ proc: BEGIN
         p_membership_tier
     );
 
-    COMMIT;
-    SELECT 
-        LAST_INSERT_ID() AS member_id,
-        'Success: member created.' AS RESULT;
+    IF ROW_COUNT() > 0 THEN 
+        SELECT 'Success: member created.' AS RESULT;
+        COMMIT;
+        SELECT LAST_INSERT_ID() AS member_id;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: member could not be created.' AS RESULT;
+    END IF;
+
 END proc //
 
--- ##################
--- UPDATE MEMBER - KL
--- ##################
+-- #############
+-- UPDATE MEMBER
+-- #############
 
 CREATE PROCEDURE sp_update_member(
     IN p_member_id INT,
-    IN p_first_name VARCHAR(50),
-    IN p_last_name VARCHAR(50),
     IN p_email VARCHAR(100),
     IN p_membership_tier TINYINT(1)
 )
@@ -179,44 +181,46 @@ proc: BEGIN
         SELECT 'Error: member not updated.' AS RESULT;
     END;
 
-    IF (p_first_name IS NULL AND p_last_name IS NULL AND p_email IS NULL AND p_membership_tier IS NULL) OR p_member_id IS NULL THEN
+    -- Input Validation --
+    IF (p_email IS NULL AND p_membership_tier IS NULL) OR p_member_id IS NULL THEN
         SELECT "Error: no updates selected." AS RESULT;
         LEAVE proc;
     END IF;
+    -- End of Input Validation --
 
     START TRANSACTION;
 
-    IF p_first_name IS NOT NULL THEN
-        UPDATE `Members` SET `first_name` = p_first_name
-            WHERE `member_id` = p_member_id;
-    END IF;
-
-    IF p_last_name IS NOT NULL THEN
-        UPDATE `Members` SET `last_name` = p_last_name
-            WHERE `member_id` = p_member_id;
-    END IF;
-
+    -- Additional Input Validation --
     IF p_email IS NOT NULL THEN
         UPDATE `Members` SET `email` = p_email
-            WHERE `member_id` = p_member_id;
+            WHERE `member_id` = p_member_id;      
+    ELSE
+        SELECT 'Error: no email selected.' AS RESULT;
+        LEAVE proc;
     END IF;
 
     IF p_membership_tier IS NOT NULL THEN
         UPDATE `Members` SET `membership_tier` = p_membership_tier
             WHERE `member_id` = p_member_id;
     END IF;
+    -- End of Additional Input Validation --
 
-    COMMIT;
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT "Success: member updated." AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: member could not be updated.' AS RESULT;
+    END IF;
 
-    SELECT "Success: member updated." AS RESULT;
 END proc //
 
--- ##################
--- DELETE MEMBER - KL
--- ##################
+-- #############
+-- DELETE MEMBER
+-- #############
 
 CREATE PROCEDURE sp_delete_member(
-    IN button_member_id INT
+    IN p_member_id INT
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -227,22 +231,37 @@ BEGIN
 
     START TRANSACTION;
 
-    IF button_member_id IS NOT NULL THEN
-        DELETE FROM Members WHERE member_id = button_member_id;
-        COMMIT;
-        SELECT 'Success: member deleted.' AS RESULT;
+    -- Input Validation --
+    IF p_member_id IS NOT NULL THEN
+        DELETE FROM Members WHERE member_id = p_member_id;
+
+        IF ROW_COUNT() > 0 THEN
+            COMMIT;
+            SELECT 'Success: member deleted.' AS RESULT;
+        ELSE
+            ROLLBACK;
+            SELECT 'Error: member not deleted.' AS RESULT;
+        END IF;
+
     ELSE
         ROLLBACK;
         SELECT 'Error: member does not exist' AS RESULT;
     END IF;
+    -- End of Input Validation --
+
 END //
+
 
 /* Stored Procedured for Member Tiers Page */
 
 DROP PROCEDURE IF EXISTS sp_update_membertiers;
 
+-- ##################
+-- UPDATE MEMBER TIER
+-- ##################
+
 CREATE PROCEDURE sp_update_membertiers(
-    IN button_member_tier TINYINT(1),
+    IN p_member_tier TINYINT(1),
     IN p_price DECIMAL(10, 2),
     IN p_discount DECIMAL(2, 1),
     IN p_rental_period INT
@@ -254,46 +273,262 @@ proc: BEGIN
         SELECT 'Error: member tier not updated.' AS RESULT;
     END;
 
+    -- Input Validation --
     IF p_rental_period IS NULL THEN
-        SELECT 'ERROR Please specify a rental period.' AS RESULT; 
+        SELECT 'Error: Please specify a rental period.' AS RESULT; 
         LEAVE proc;
     END IF;
+    -- End of Input Validation --
 
     START TRANSACTION;
-
+    
+    -- Additional Input Validation & Updates --
     IF p_price IS NULL OR p_price = 0 THEN
         UPDATE `MemberTiers`
         SET `price` = 0
-        WHERE `membership_tier` = button_member_tier;
+        WHERE `membership_tier` = p_member_tier;
     ELSE
         UPDATE `MemberTiers`
         SET `price` = p_price
-        WHERE `membership_tier` = button_member_tier;
+        WHERE `membership_tier` = p_member_tier;
     END IF;
 
     IF p_discount IS NULL OR p_discount = 0 THEN
         UPDATE `MemberTiers`
         SET `rental_discount` = 0
-        WHERE `membership_tier` = button_member_tier;
+        WHERE `membership_tier` = p_member_tier;
     ELSE
         UPDATE `MemberTiers`
         SET `rental_discount` = p_discount
-        WHERE `membership_tier` = button_member_tier;
+        WHERE `membership_tier` = p_member_tier;
     END IF;
 
-    UPDATE `MemberTiers` SET `rental_period` = p_rental_period WHERE `membership_tier` = button_member_tier;
-    COMMIT; 
+    IF p_rental_period IS NOT NULL THEN
+        UPDATE `MemberTiers` 
+        SET `rental_period` = p_rental_period
+        WHERE `membership_tier` = p_member_tier;
+    ELSE
+        UPDATE `MemberTiers`
+        SET `rental_period` = 0
+        WHERE `membership_tier` = p_member_tier;
+    END IF;
+    -- End of Additional Input Validation and Updates --
 
-    SELECT 'Success: tier updated.' AS RESULT;
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT 'Success: member tier updated.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: member tier could not be updated' AS RESULT;
+    END IF;
 
-END //
+END proc//
 
--- ####################################
--- UPDATE RENTAL (return date) - KL
--- 'LEAVE' syntax derived from Copilot
--- ####################################
+/* Stored Procedures for Tools Page */
 
-CREATE OR REPLACE PROCEDURE sp_update_rental(
+DROP PROCEDURE IF EXISTS sp_create_tool;
+DROP PROCEDURE IF EXISTS sp_update_tool;
+DROP PROCEDURE IF EXISTS sp_delete_tool;
+
+-- ###########
+-- CREATE TOOL
+-- ###########
+
+CREATE PROCEDURE sp_create_tool(
+    IN p_name VARCHAR(45),
+    IN p_condition VARCHAR(45),
+    IN p_tier TINYINT(1),
+    IN p_fee DECIMAL(10, 2)
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: tool not created.' AS RESULT;
+    END;
+
+    -- Input Validation --
+    IF p_name IS NULL THEN
+        SELECT 'Please enter the tool name.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_fee IS NULL THEN
+        SELECT 'Please enter the rental fee amount.' AS RESULT;
+        LEAVE proc;
+    END IF;
+    -- End of Input Validation --
+
+    START TRANSACTION; 
+
+    INSERT INTO `Tools` (
+        name,
+        `condition`,
+        membership_tier,
+        rental_fee
+    )
+    VALUES (
+        p_name,
+        p_condition,
+        p_tier,
+        p_fee
+    );
+
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT LAST_INSERT_ID() AS tool_id, 'Success: tool created.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: tool could not be created.' AS RESULT; 
+    END IF;
+
+END proc//
+
+-- ###########
+-- UPDATE TOOL
+-- ###########
+
+CREATE PROCEDURE sp_update_tool(
+    IN p_tool_id INT,
+    IN p_name VARCHAR(45),
+    IN p_condition VARCHAR(45),
+    IN p_tier TINYINT(1),
+    IN p_fee DECIMAL(10,2)
+)
+proc: BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: tool not updated.' AS RESULT;
+    END;
+
+    -- Input Validation --
+    IF p_name IS NULL THEN
+        SELECT 'Please enter the name of the tool.' AS RESULT;
+        LEAVE proc;
+    ELSEIF p_condition IS NULL THEN
+        SELECT 'Please enter the condition of the tool.' AS RESULT;
+        LEAVE proc;
+    END IF;
+    -- End of Input Validation --
+
+    START TRANSACTION;
+
+    UPDATE `Tools` 
+    SET 
+        `condition` = p_condition,
+        `membership_tier` = p_tier,
+        `rental_fee` = p_fee
+    WHERE `tool_id` = p_tool_id;
+
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT 'Success: tool updated.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: tool could not be updated.' AS RESULT;
+    END IF;
+
+END proc//
+
+-- ###########
+-- DELETE TOOL
+-- ###########
+
+CREATE PROCEDURE sp_delete_tool(
+    IN p_tool_id INT
+)
+proc: BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: tool not deleted.' AS RESULT;
+    END;
+
+    -- Input Validation --
+    IF p_tool_id IS NULL THEN
+        SELECT 'Error: no tool id entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+    -- End of Input Validation --
+
+    START TRANSACTION;
+
+    DELETE FROM `Tools` WHERE `tool_id` = p_tool_id;
+
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT 'Success: tool deleted.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: tool could not be deleted.' AS RESULT;
+    END IF;
+
+END proc//
+
+/* Stored Procedures for Rentals Page */
+
+DROP PROCEDURE IF EXISTS sp_create_rental;
+DROP PROCEDURE IF EXISTS sp_update_rental;
+
+-- #############
+-- CREATE RENTAL
+-- #############
+
+CREATE PROCEDURE sp_create_rental(
+    IN p_member_id INT,
+    IN p_tool_id INT,
+    IN p_rent_date DATE,
+    IN p_due_date DATE,
+    IN p_return_date DATE,
+    IN p_fee DECIMAL(10,2)
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: rental not created.' AS RESULT;
+    END;
+
+    IF p_rent_date IS NULL THEN
+        SELECT 'Please enter a date of rental.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_due_date IS NULL THEN
+        SELECT 'Please enter the due date.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    INSERT INTO `Rentals`(
+        member_id,
+        tool_id,
+        rent_date,
+        due_date,
+        returned_date,
+        fee
+    )
+    VALUES (
+        p_member_id,
+        p_tool_id,
+        p_rent_date,
+        p_due_date,
+        p_return_date,
+        p_fee
+    );
+
+    COMMIT;
+    SELECT LAST_INSERT_ID() AS rental_id, 'Success: rental created.' AS RESULT;
+
+END proc // 
+
+-- #############
+-- UPDATE RENTAL
+-- #############
+
+CREATE PROCEDURE sp_update_rental(
     IN p_rental_id INT,
     IN p_return_date DATE
 )
@@ -322,6 +557,213 @@ proc: BEGIN
     COMMIT;
     SELECT 'Success: rental updated.' AS RESULT;
 
-END //
+END proc //
+
+/* Stored Procedures for Classes Page */
+
+DROP PROCEDURE IF EXISTS sp_create_class;
+DROP PROCEDURE IF EXISTS sp_update_class;
+DROP PROCEDURE IF EXISTS sp_delete_class;
+
+-- ############
+-- CREATE CLASS
+-- ############
+
+CREATE PROCEDURE sp_create_class(
+    IN p_instructor VARCHAR(45),
+    IN p_class_name VARCHAR(250),
+    IN p_description VARCHAR(1000),
+    IN p_capacity INT,
+    IN p_start_date DATE,
+    IN p_end_date DATE
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: class not created.' AS RESULT;
+    END;
+
+    START TRANSACTION; 
+
+    INSERT INTO `Classes`(
+        instructor_name,
+        class_name,
+        `description`,
+        capacity,
+        `start_date`,
+        end_date
+    )
+    VALUES (
+        p_instructor,
+        p_class_name,
+        p_description,
+        p_capacity,
+        p_start_date,
+        p_end_date
+    );
+
+    SELECT LAST_INSERT_ID() AS class_id; 
+    COMMIT;
+
+END proc //
+
+-- ############
+-- UPDATE CLASS
+-- ############
+
+CREATE PROCEDURE sp_update_class(
+    IN p_class_id INT,
+    IN p_instructor VARCHAR(45),
+    IN p_class_name VARCHAR(250),
+    IN p_description VARCHAR(1000),
+    IN p_capacity INT,
+    IN p_start_date DATE,
+    IN p_end_date DATE
+)
+proc: BEGIN
+ DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: class not updated.' AS RESULT;
+    END;
+
+    START TRANSACTION;
+    IF p_instructor IS NOT NULL THEN
+        UPDATE `Classes` SET instructor_name = p_instructor WHERE class_id = p_class_id;
+    ELSE
+        SELECT 'Error: no instructor entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_class_name IS NOT NULL THEN
+        UPDATE `Classes` SET class_name = p_class_name WHERE class_id = p_class_id;
+    ELSE
+        SELECT 'Error: no class name entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_description IS NOT NULL THEN
+        UPDATE `Classes` SET `description` = p_description WHERE class_id = p_class_id;
+     ELSE
+        SELECT 'Error: no description entered.' AS RESULT;
+        LEAVE proc;
+    END IF; 
+
+    IF p_capacity IS NOT NULL THEN
+        UPDATE `Classes` SET capacity = p_capacity WHERE class_id = p_class_id;
+     ELSE
+        SELECT 'Error: no capacity entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_start_date IS NOT NULL THEN
+        UPDATE `Classes` SET `start_date` = p_start_date WHERE class_id = p_class_id;
+     ELSE
+        SELECT 'Error: no start date entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_end_date IS NOT NULL THEN
+        UPDATE `Classes` SET end_date = p_end_date WHERE class_id = p_class_id; 
+     ELSE
+        SELECT 'Error: no end date entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    COMMIT;
+
+END proc // 
+
+-- ############
+-- DELETE CLASS
+-- ############
+
+CREATE PROCEDURE sp_delete_class(
+    IN p_class_id INT
+)
+proc: BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: class not updated.' AS RESULT;
+    END;
+
+    IF p_class_id IS NULL THEN
+        SELECT 'Error: no class found.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    DELETE FROM `Classes` WHERE class_id = p_class_id;
+    COMMIT;
+    SELECT 'Success: class deleted.' AS RESULT;
+
+END proc // 
+
+/* Stored Procedures for Class Registrations Page */
+
+DROP PROCEDURE IF EXISTS sp_create_registration;
+DROP PROCEDURE IF EXISTS sp_delete_registration;
+
+-- #########################
+-- CREATE CLASS REGISTRATION
+-- #########################
+
+CREATE PROCEDURE sp_create_registration(
+    IN p_member_id INT,
+    IN p_class_id INT
+)
+proc: BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: class registration not created.' AS RESULT;
+    END;
+
+    IF p_member_id IS NULL OR p_class_id IS NULL THEN
+        SELECT 'Error: invalid information.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    INSERT INTO `ClassRegistrations`(
+        member_id,
+        class_id
+    )
+    VALUES(
+        p_member_id,
+        p_class_id
+    );
+
+    SELECT LAST_INSERT_ID() AS class_registration_id;
+    COMMIT;
+
+END proc //
+
+-- #########################
+-- DELETE CLASS REGISTRATION
+-- #########################
+
+CREATE PROCEDURE sp_delete_registration(
+    IN p_registration_id INT
+)
+proc: BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: registration not deleted.' AS RESULT;
+    END;
+
+    IF p_registration_id IS NULL THEN
+        SELECT 'Error: no registration ID found.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    DELETE FROM `ClassRegistrations` WHERE class_registration_id = p_registration_id;
+    COMMIT;
+END proc // 
 
 DELIMITER ;
