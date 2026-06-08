@@ -78,6 +78,8 @@ const UpdateMemberTierForm = ({ tierData, memberTiers, backendURL, refresh, onCl
                     onChange={handleChange}
                 />
                 <input type='submit' />
+
+                <button type="button" className="cancel-button" onClick={onClose}>Cancel</button>
             </form>
         </div>
     );

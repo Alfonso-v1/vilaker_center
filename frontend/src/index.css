@@ -339,14 +339,14 @@ td button {
   margin-top: 1rem;
 }
 
-.add-member-section {
+.add-row-section {
   display: flex;
   justify-content: center;
   margin: 18px 0 32px;
 }
 
-.add-member-row input,
-.add-member-row select {
+.add-new-row input,
+.add-new-row select {
   box-sizing: border-box;
   width: 100%;
   padding: 8px 10px;
@@ -355,7 +355,7 @@ td button {
   font-size: 14px;
 }
 
-.add-member-button,
+.add-row-button,
 .save-button,
 .cancel-button {
   border: none;
@@ -367,12 +367,12 @@ td button {
   margin-right: 8px;
 }
 
-.add-member-button {
+.add-row-button {
   background-color: #2f7f88;
   color: white;
 }
 
-.add-member-button:hover {
+.add-row-button:hover {
   background-color: #245f66;
 }
 

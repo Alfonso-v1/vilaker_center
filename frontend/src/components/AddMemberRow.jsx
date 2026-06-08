@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const AddMemberRow = ({ memberTiers, backendURL, refreshMembers, onCancel }) => {
+const AddMemberRow = ({ memberTiers, backendURL, refresh, onCancel }) => {
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -27,7 +27,7 @@ const AddMemberRow = ({ memberTiers, backendURL, refreshMembers, onCancel }) => 
 
             if (response.ok) {
                 console.log('Member created successfully');
-                refreshMembers();
+                refresh();
                 onCancel();
             } else {
                 console.log('Error creating member.');
@@ -38,7 +38,7 @@ const AddMemberRow = ({ memberTiers, backendURL, refreshMembers, onCancel }) => 
     };
 
     return (
-        <tr className='add-member-row'>
+        <tr className='add-new-row'>
             <td>New</td>
 
             <td>
