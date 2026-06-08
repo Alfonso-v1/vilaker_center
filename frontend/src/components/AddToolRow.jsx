@@ -33,7 +33,7 @@ const AddToolRow = ({ memberTiers, backendURL, refresh, onCancel }) => {
                 console.log('Error creating tool.');
             }
         } catch (error) {
-            console.error('Error during tool creationg: ', error);
+            console.error('Error during tool creation: ', error);
         }
     };
 

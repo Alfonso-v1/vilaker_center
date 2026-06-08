@@ -6,7 +6,7 @@ const TableRow = ({ rowObject, backendURL, refresh, onEdit, onDelete, showUpdate
                 <td key={index}>{value}</td>
             ))}
             {(showUpdate || showDelete) && (
-              <td>
+              <td className="table-actions">
                 {showUpdate && (
                     <button type='button' className="update-button" onClick={() => onEdit(rowObject)}>Update</button>
                 )}

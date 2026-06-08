@@ -80,7 +80,7 @@ BEGIN
     VALUES
     ('Phillip Lewis', 'Sewing for Beginners', 'An introduction to using a sewing machine and basic stitching fundamentals', 15, '2026-01-01', '2026-01-11'),
     ('Sarah Thomas', 'An Intro to Woodworking', 'Learn about basic wood working tools, joinery, and finishing', 20, '2026-02-01', '2026-02-11'),
-    ('Ricardo Martinez', 'Pottery', 'Experience the joy of working with clay and unleash your creativity', 10, '2026-03-01', '2026-03-01'),
+    ('Ricardo Martinez', 'Pottery', 'Experience the joy of working with clay and unleash your creativity', 10, '2026-03-01', '2026-03-11'),
     ('Natalie Harris', 'Basic Home Electricity', 'Understand basic electrical safety and switch/outlet installation', 10, '2026-04-01', '2026-04-05'),
     ('Theodore Rutherford', 'Learn 3D Printing', 'Start your 3D printing journey by learning the basics of CAD and MakerWorld', 25, '2026-05-01', '2026-05-15');
 

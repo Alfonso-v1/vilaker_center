@@ -145,8 +145,10 @@ app.get('/classes', async (req, res) => {
             class_id as 'Class ID', instructor_name as Instructor,
             class_name as Course, description as 'Course Description',
             capacity as Capacity,
-            DATE_FORMAT(start_date, '%M %d, %Y') as 'Begins On',
-            DATE_FORMAT(end_date, '%M %d, %Y') as 'Ends On'
+            DATE_FORMAT(start_date, '%M %d, %Y') AS 'Begins On',
+            DATE_FORMAT(end_date, '%M %d, %Y') AS 'Ends On',
+            DATE_FORMAT(start_date, '%Y-%m-%d') AS 'Start Date Value',
+            DATE_FORMAT(end_date, '%Y-%m-%d') AS 'End Date Value'
             FROM Classes;`;
         const [classes] = await db.query(query1);
     

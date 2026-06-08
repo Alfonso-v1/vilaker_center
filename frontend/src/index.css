@@ -172,16 +172,24 @@ p {
 }
 
 table {
-  width: 90%;
+  width: 95%;
   max-width: 2500px;
   margin: 0 auto 24px;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.classes-table th:nth-child(4),
+.classes-table td:nth-child(4) {
+  width: 25%;
 }
 
 th, td {
   text-align: left;
   padding: 8px 12px;
   border: 1px solid black;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 thead tr {
@@ -207,6 +215,33 @@ td button.update-button {
 
 td button.update-button:hover {
   background-color: #245f66;
+}
+
+.table-actions {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.table-actions button {
+  margin: 4px;
+}
+
+.classes-table .table-actions button {
+  display: block;
+  width: 80px;
+  padding: 6px 10px;
+}
+
+.classes-table .add-class-buttons {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.classes-table .add-class-buttons button {
+  display: block;
+  width: 80px;
+  padding: 6px 10px;
+  margin: 4px;
 }
 
 .cuForm {
@@ -240,6 +275,16 @@ td button.update-button:hover {
   font-weight: 800;
 }
 
+.cuForm textarea {
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
+}
+
 td button {
   padding: 4px 10px;
   cursor: pointer;
@@ -248,7 +293,6 @@ td button {
   border-radius: 4px;
   font-size: 14px;
   font-weight: bold;
-  margin-right: 8px;
 }
 
 .forms {
