@@ -69,11 +69,14 @@ app.get('/memberTiers', async (req, res) => {
 app.get('/tools', async (req, res) => {
     try {
         const query1 = `SELECT 
+            Tools.tool_id,
             Tools.name as 'Tool',
             Tools.condition as 'Condition',
-            Tools.membership_tier as 'Minimum Required Tier',
+            Tools.membership_tier as 'Minimum Required Tier ID',
+            MemberTiers.tier_name as 'Minimum Required Tier',
             Tools.rental_fee as 'Rental Fee'
-            FROM Tools;`;
+            FROM Tools
+            LEFT JOIN MemberTiers ON Tools.membership_tier = MemberTiers.membership_tier;`;
         const query2 = 'SELECT * FROM MemberTiers;';
         const [tools] = await db.query(query1);
         const [memberTiers] = await db.query(query2);
