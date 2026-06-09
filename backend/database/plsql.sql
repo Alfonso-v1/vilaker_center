@@ -263,7 +263,7 @@ DROP PROCEDURE IF EXISTS sp_update_membertiers;
 CREATE PROCEDURE sp_update_membertiers(
     IN p_member_tier TINYINT(1),
     IN p_price DECIMAL(10, 2),
-    IN p_discount DECIMAL(2, 1),
+    IN p_discount DECIMAL(5, 2),
     IN p_rental_period INT
 )
 proc: BEGIN
@@ -299,7 +299,7 @@ proc: BEGIN
         WHERE `membership_tier` = p_member_tier;
     ELSE
         UPDATE `MemberTiers`
-        SET `rental_discount` = p_discount
+        SET `rental_discount` = p_discount / 100
         WHERE `membership_tier` = p_member_tier;
     END IF;
 
@@ -416,6 +416,7 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION
 
     UPDATE `Tools` 
     SET 
+        `name` = p_name,
         `condition` = p_condition,
         `membership_tier` = p_tier,
         `rental_fee` = p_fee
@@ -603,7 +604,7 @@ proc: BEGIN
         p_end_date
     );
 
-    SELECT LAST_INSERT_ID() AS class_id; 
+    SELECT LAST_INSERT_ID() AS class_id, 'Success: Class created.' AS RESULT; 
     COMMIT;
 
 END proc //
@@ -672,6 +673,7 @@ proc: BEGIN
     END IF;
 
     COMMIT;
+    SELECT 'Success: class update.' AS RESULT;
 
 END proc // 
 
@@ -716,6 +718,11 @@ CREATE PROCEDURE sp_create_registration(
     IN p_class_id INT
 )
 proc: BEGIN
+
+DECLARE class_capacity INT;
+DECLARE current_registrations INT;
+DECLARE existing_registration INT;
+
 DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -724,6 +731,27 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION
 
     IF p_member_id IS NULL OR p_class_id IS NULL THEN
         SELECT 'Error: invalid information.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    SELECT capacity INTO class_capacity FROM Classes WHERE class_id = p_class_id;
+
+    IF class_capacity IS NULL THEN 
+        SELECT 'Error: class not found.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    SELECT COUNT(*) INTO existing_registration FROM ClassRegistrations WHERE member_id = p_member_id AND class_id = p_class_id;
+
+    IF existing_registration > 0 THEN
+        SELECT 'Error: member already registered for this class.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    SELECT COUNT(*) INTO current_registrations FROM ClassRegistrations WHERE class_id = p_class_id;
+
+    IF current_registrations >= class_capacity THEN
+        SELECT "Error: class is at capacity." AS RESULT;
         LEAVE proc;
     END IF;
 
@@ -738,8 +766,8 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION
         p_class_id
     );
 
-    SELECT LAST_INSERT_ID() AS class_registration_id;
     COMMIT;
+    SELECT LAST_INSERT_ID() AS class_registration_id, 'Success: Registration created.' AS RESULT;
 
 END proc //
 

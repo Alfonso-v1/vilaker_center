@@ -2,7 +2,7 @@ const DeleteClassForm = ({ classData, backendURL, refresh, onClose }) => {
     
     const handleDelete = async () => {
         try {
-            await fetch(`${backendURL}/classes/delete`, {
+            await fetch(backendURL + `/classes/delete`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ delete_class_id: classData['Class ID'] })

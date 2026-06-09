@@ -19,7 +19,7 @@ const AddToolRow = ({ memberTiers, backendURL, refresh, onCancel }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch(backendURL + 'tools/create', {
+            const response = await fetch(backendURL + '/tools/create', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(formData),

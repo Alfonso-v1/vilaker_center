@@ -37,7 +37,7 @@ function Navigation({ backendURL }) {
                     
                 </div>
                 <button className="nav-button" onClick={handleReset} disabled={resetting}>
-                    {resetting ? 'Resetting...' : 'Reset Database'}
+                    {resetting ? 'Resetting...' : 'Reset DB'}
                 </button>
             </nav>
         </header>

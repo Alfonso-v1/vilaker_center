@@ -89,8 +89,8 @@ const UpdateClassForm = ({ classData, backendURL, refresh, onClose }) => {
                 <label htmlFor="update_start_date">Class Start Date: </label>
                 <input
                     type='date'
-                    name='update_start_date"'
-                    id='update_start_date"'
+                    name='update_start_date'
+                    id='update_start_date'
                     value={formData.update_start_date}
                     onChange={handleChange}
                 />
@@ -98,7 +98,7 @@ const UpdateClassForm = ({ classData, backendURL, refresh, onClose }) => {
                 <label htmlFor="update_end_date">Class End Date: </label>
                 <input
                     type='date'
-                    name='updateend_date'
+                    name='update_end_date'
                     id='update_end_date'
                     value={formData.update_end_date}
                     onChange={handleChange}
