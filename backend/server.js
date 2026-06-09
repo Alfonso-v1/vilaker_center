@@ -184,6 +184,7 @@ app.get('/memberRegistrations/:member_id', async (req, res) => {
         const { member_id } = req.params;
         const query1 = `SELECT 
             ClassRegistrations.class_registration_id AS 'Registration ID',
+            ClassRegistrations.class_id AS 'Class ID',
             CONCAT(Members.first_name, ' ', Members.last_name) AS 'Member Name',
             Classes.class_name as 'Class', DATE_FORMAT(start_date, '%M %d, %Y') as 'Begins On',
             DATE_FORMAT(end_date, '%M %d, %Y') as 'Ends On'
@@ -553,6 +554,31 @@ app.post('/class-registrations/create', async (req, res) => {
     } catch (error) {
         console.error('Error creating registration', error);
         res.status(500).send('An error occured while registering.');
+    }
+})
+
+app.post('/class-registrations/update', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_update_registration(?, ?);`;
+
+        const result = await db.query(query1, [
+            data.update_registration_id,
+            data.update_class_id
+        ])
+
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `UPDATE Registration. ID: ${data.update_registration_id}. ` +
+            `RESULT: ${procedureMessage}`
+        )
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error updating registration', error);
+        res.status(500).send('An error occured while updating registration.');
     }
 })
 

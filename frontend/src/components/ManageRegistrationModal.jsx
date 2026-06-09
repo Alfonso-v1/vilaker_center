@@ -13,6 +13,7 @@
 import { useState, useEffect } from "react"; 
 import TableRow from "./TableRow";
 import AddRegistrationRow from "./AddRegistrationRow";
+import UpdateRegistrationForm from "./UpdateRegistrationForm";
 import DeleteRegistrationForm from "./DeleteRegistrationForm";
 
 const ManageRegistrationModal = ({ members, classes, backendURL }) => {
@@ -20,6 +21,7 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState('');
     const [registrations, setRegistrations] = useState([]);
+    const [editingRow, setEditingRow] = useState(null);
     const [deletingRow, setDeletingRow] = useState(null);
     const [addingRegistration, setAddingRegistration] = useState(false);
 
@@ -44,6 +46,8 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
         setSelectedMember('');
         setRegistrations([]);
         setAddingRegistration(false);
+        setDeletingRow(null);
+        setEditingRow(null);
     }
     
     return (
@@ -81,9 +85,15 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
                                         </thead>
 
                                         <tbody>
-                                            {registrations.map((registration, index) => (
-                                            <TableRow key={index} rowObject={registration} backendURL={backendURL} refresh={refreshRegistrations} showUpdate={false} onDelete={() => setDeletingRow(registration)} />
-                                            ))}
+                                        {registrations.map((registration, index) => {
+                                            
+                                            const displayRegistration = { ...registration };
+                                            delete displayRegistration['Class ID'];
+                                        
+                                            return (
+                                            <TableRow key={index} rowObject={displayRegistration} backendURL={backendURL} refresh={refreshRegistrations} onEdit={() => setEditingRow(registration)} onDelete={() => setDeletingRow(registration)} />
+                                            )
+                                        })}
 
                                             {addingRegistration && selectedMemberData && (
                                                 <AddRegistrationRow memberData={selectedMemberData} classes={classes} backendURL={backendURL} refresh={refreshRegistrations} onCancel={() => setAddingRegistration(false)} />
@@ -97,15 +107,23 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
 
                                     <div className='add-row-section'>
                                         <button type='button' className='add-row-button' onClick={() => setAddingRegistration(true)}>Add Registration</button>    
-                                    </div>
-                                    
-                                    {deletingRow && 
-                                        <div className="modal-overlay" onClick={() => setDeletingRow(null)}>
-                                            <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-                                                <DeleteRegistrationForm registrationData={deletingRow} backendURL={backendURL} refresh={refreshRegistrations} onClose={() => setDeletingRow(null)} />
-                                            </div>
+                                </div>
+                                
+                                {editingRow &&
+                                    <div className="modal-overlay" onClick={() => setEditingRow(null)}>
+                                        <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+                                            <UpdateRegistrationForm registrationData={editingRow} classes={classes} backendURL={backendURL} refresh={refreshRegistrations} onClose={() => setEditingRow(null)} />
                                         </div>
-                                    }
+                                    </div>
+                                }
+                                    
+                                {deletingRow && 
+                                    <div className="modal-overlay" onClick={() => setDeletingRow(null)}>
+                                        <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+                                            <DeleteRegistrationForm registrationData={deletingRow} backendURL={backendURL} refresh={refreshRegistrations} onClose={() => setDeletingRow(null)} />
+                                        </div>
+                                    </div>
+                                }
                                     
                                 </div>
                             )}

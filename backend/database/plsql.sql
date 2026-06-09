@@ -725,6 +725,7 @@ END proc //
 /* Stored Procedures for Class Registrations Page */
 
 DROP PROCEDURE IF EXISTS sp_create_registration;
+DROP PROCEDURE IF EXISTS sp_update_registration;
 DROP PROCEDURE IF EXISTS sp_delete_registration;
 
 -- #########################
@@ -787,6 +788,46 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION
     COMMIT;
     SELECT LAST_INSERT_ID() AS class_registration_id, 'Success: Registration created.' AS RESULT;
 
+END proc //
+
+-- #########################
+-- CREATE CLASS REGISTRATION
+-- #########################
+
+CREATE PROCEDURE sp_update_registration(
+    IN p_registration_id INT,
+    IN p_class_id INT
+)
+proc: BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error: registration not updated.' AS RESULT;
+    END;
+
+    IF p_registration_id IS NULL THEN
+        SELECT 'Error: no registration selected.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_class_id IS NULL THEN
+        SELECT 'Error: no class selected.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    START TRANSACTION;
+
+    UPDATE ClassRegistrations
+    SET class_id = p_class_id
+    WHERE class_registration_id = p_registration_id;
+
+    IF ROW_COUNT() > 0 THEN
+        COMMIT;
+        SELECT 'Success: registration updated.' AS RESULT;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error: registration could not be updated.' AS RESULT;
+    END IF;
 END proc //
 
 -- #########################
