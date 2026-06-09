@@ -32,8 +32,11 @@ function Tools({ backendURL }) {
 
   return (
     <div>
-      <h1>Tools</h1>
-      <p>View all the tool rentals we currently offer! We're always add new tools to our catalog!</p>
+      <div className="page-description">
+        <h1>Tools</h1>
+        <p>View all the tool rentals we currently offer! We're always add new tools to our catalog!</p>
+      </div>
+      
       <table>
         <thead>
           <tr>

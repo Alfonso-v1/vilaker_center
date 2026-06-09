@@ -29,8 +29,11 @@ function Classes({ backendURL }) {
 
   return (
     <div>
-      <h1>Check out our Classes</h1>
-      <p>Class Offerings will be updated on a periodic basis. Please check by every so ofter to see what we have to offer!</p>
+      <div className="page-description">
+        <h1>Check out our Classes</h1>
+        <p>Class Offerings will be updated on a periodic basis. Please check by every so ofter to see what we have to offer!</p>
+      </div>
+      
 
       <table className="classes-table">
         <thead>

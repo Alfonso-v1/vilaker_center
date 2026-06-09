@@ -48,7 +48,7 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
     
     return (
         <div>
-            <button onClick={() => setIsOpen(true)}>Manage Your Registrations</button>
+            <button type='button' className="manage-registrations-button" onClick={() => setIsOpen(true)}>Manage Member Registrations</button>
             {isOpen && (
                 <div className='modal-overlay' onClick={closeModal}>
                     <div className="modal-panel" onClick={(e) => e.stopPropagation()}>

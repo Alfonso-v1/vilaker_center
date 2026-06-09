@@ -30,9 +30,13 @@ function ClassRegistrations({ backendURL }) {
   }, []);
 
   return (
-    <div>
-      <h1>Manage Class Registrations</h1>
-      <p>See the number of open spaces left for each class offering.</p>
+    <div> 
+      
+      <div className="page-description">
+        <h1>Manage Class Registrations</h1>
+        <p>See the number of open spaces left for each class offering.</p>
+      </div>
+      
       <table>
                 <thead>
                     <tr>

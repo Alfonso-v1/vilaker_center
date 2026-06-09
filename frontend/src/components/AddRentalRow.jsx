@@ -178,7 +178,7 @@ const AddRentalRow = ({ members, tools, backendURL, refresh, onCancel }) => {
                 />
             </td>
 
-            <td className="table-actions">
+            <td className="add-class-buttons">
                 <button type="button" className="save-button" onClick={handleSubmit}>Save</button>
                 <button type="button" className="cancel-button" onClick={onCancel}>Cancel</button>
             </td>

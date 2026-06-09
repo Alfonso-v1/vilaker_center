@@ -32,8 +32,12 @@ function Members({ backendURL }) {
 
   return (
     <div>
-      <h1>Browse Our Members</h1>
-      <p>Add new members or Edit existing members</p>
+      
+      <div className="page-description">
+        <h1>Browse Our Members</h1>
+        <p>Add new members or Edit existing members</p>
+      </div>
+      
       <table>
                 <thead>
                     <tr>

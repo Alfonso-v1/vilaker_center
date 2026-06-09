@@ -76,7 +76,7 @@ const AddRegistrationRow = ({ memberData, classes, backendURL, refresh, onCancel
             <td>{selectedClass ? selectedClass['Begins On']: ''}</td>
             <td>{selectedClass ? selectedClass['Ends On']: ''}</td>
 
-            <td>
+            <td className="registration-buttons">
             <button type="button" className="save-button" onClick={handleSubmit}>Register</button>
             <button type="button" className="cancel-button" onClick={onCancel}>Cancel</button>
             </td>

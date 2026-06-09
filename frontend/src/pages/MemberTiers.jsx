@@ -25,8 +25,11 @@ function MemberTiers({ backendURL }) {
 
   return (
     <div>
-      <h1>Membership Tiers</h1>
-      <p>Browse our current Membership Tier offerings. Ask a staff member about what comes with each tier!</p>
+      <div className="page-description">
+        <h1>Membership Tiers</h1>
+        <p>Browse our current Membership Tier offerings. Ask a staff member about what comes with each tier!</p>
+      </div>
+      
 
       <table>
         <thead>

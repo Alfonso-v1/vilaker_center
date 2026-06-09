@@ -32,7 +32,10 @@ function Rentals({ backendURL }) {
 
   return (
     <div>
-      <h1>See our past Rentals</h1>
+      <div className="page-description">
+        <h1>Manage Rentals</h1>
+      </div>
+      
 
       <table>
         <thead>
