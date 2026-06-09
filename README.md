@@ -3,7 +3,7 @@ A full-stack web app for managing a community tool lending center.
 
 # Citations
 ### CITATION FOR: Starter Code
-    All code is based on the CS 340 starter code, with the exception of [placeholder]
+    All code is based on the CS 340 starter code, with the exception of the Add, Update, and Delete components. 
 
 ### CITATION FOR: Manage Registrations Modal
     Date: 5/14/26
