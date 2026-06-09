@@ -332,6 +332,7 @@ app.post('/members/update', async (req, res) => {
             data.update_member_tier
         ]);
 
+
         const procedureMessage = result[0][0].RESULT;
 
         console.log(
@@ -342,7 +343,7 @@ app.post('/members/update', async (req, res) => {
         res.status(200).json({ message: procedureMessage });
     } catch (error) {
         console.error('Error updating member', error); 
-        res.status(500).send('An error occured while updating member.');
+        res.status(500).json({message: 'Error: member not updated.'});
     }
 })
 

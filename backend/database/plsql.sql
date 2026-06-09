@@ -171,6 +171,8 @@ END proc //
 
 CREATE PROCEDURE sp_update_member(
     IN p_member_id INT,
+    IN p_first_name VARCHAR(50),
+    IN p_last_name VARCHAR(50),
     IN p_email VARCHAR(100),
     IN p_membership_tier TINYINT(1)
 )
@@ -191,6 +193,22 @@ proc: BEGIN
     START TRANSACTION;
 
     -- Additional Input Validation --
+    IF p_first_name IS NOT NULL THEN
+        UPDATE `Members` SET `first_name` = p_first_name
+        WHERE `member_id` = p_member_id;
+    ELSE
+        SELECT 'Error: no first name entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
+    IF p_last_name IS NOT NULL THEN
+        UPDATE `Members` SET `last_name` = p_last_name
+        WHERE `member_id` = p_member_id;
+    ELSE
+        SELECT 'Error: no last name entered.' AS RESULT;
+        LEAVE proc;
+    END IF;
+
     IF p_email IS NOT NULL THEN
         UPDATE `Members` SET `email` = p_email
             WHERE `member_id` = p_member_id;      
