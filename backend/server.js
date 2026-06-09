@@ -104,10 +104,21 @@ app.get('/rentals', async (req, res) => {
             INNER JOIN Members ON Members.member_id = Rentals.member_id
             INNER JOIN Tools ON Tools.tool_id = Rentals.tool_id;`;
         const query2 = `SELECT * FROM Tools;`;
+        const query3 = `SELECT
+            Members.member_id,
+            Members.first_name,
+            Members.last_name,
+            Members.membership_tier,
+            MemberTiers.tier_name,
+            MemberTiers.rental_period,
+            MemberTiers.rental_discount
+            FROM Members
+            INNER JOIN MemberTiers ON Members.membership_tier = MemberTiers.membership_tier;`;
         const [rentals] = await db.query(query1);
         const [tools] = await db.query(query2);
+        const [members] = await db.query(query3)
     
-        res.status(200).json({ rentals, tools });  // Send the results to the frontend
+        res.status(200).json({ rentals, tools, members });  // Send the results to the frontend
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -118,14 +129,20 @@ app.get('/rentals', async (req, res) => {
 
 app.get('/classRegistrations', async (req, res) => {
     try {
-        const query1 = `SELECT class_name as 'Classes',
+        const query1 = `SELECT 
+            class_name as 'Classes',
             COUNT(ClassRegistrations.class_registration_id) as 'Total Class Registrations',
             Classes.capacity - COUNT(ClassRegistrations.class_registration_id) AS 'Remaining Spots',
             Classes.capacity as 'Total Class Capacity'
             FROM Classes
             LEFT JOIN ClassRegistrations ON Classes.class_id = ClassRegistrations.class_id
             GROUP BY Classes.class_id, Classes.capacity, Classes.class_name;`;
-        const query2 = `SELECT * FROM Classes;`;
+        const query2 = `SELECT 
+            class_id,
+            class_name,
+            DATE_FORMAT(start_date, '%M %d, %Y') AS 'Begins On',
+            DATE_FORMAT(end_date, '%M %d, %Y') AS 'Ends On'
+            FROM Classes;`;
         const query3 = `SELECT * FROM Members`;
         const [classRegistrations] = await db.query(query1);
         const [classes] = await db.query(query2);
@@ -166,6 +183,7 @@ app.get('/memberRegistrations/:member_id', async (req, res) => {
     try {
         const { member_id } = req.params;
         const query1 = `SELECT 
+            ClassRegistrations.class_registration_id AS 'Registration ID',
             CONCAT(Members.first_name, ' ', Members.last_name) AS 'Member Name',
             Classes.class_name as 'Class', DATE_FORMAT(start_date, '%M %d, %Y') as 'Begins On',
             DATE_FORMAT(end_date, '%M %d, %Y') as 'Ends On'
@@ -206,6 +224,36 @@ app.post('/members/delete', async (req, res) => {
         console.error('Error executing queries:', error);
         res.status(500).send('An error occured while executing the database queries. Please retry.');
     };
+})
+
+app.post('/rentals/create', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_create_rental(?, ?, ?, ?, ?, ?);`;
+
+        const result = await db.query(query1, [
+            data.member_id,
+            data.tool_id, 
+            data.rent_date,
+            data.due_date,
+            data.returned_date,
+            data.fee
+        ])
+
+        const createdRentalID = result[0][0][0].rental_id;
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `CREATE Rental. ID: ${createdRentalID}, ` +
+            `RESULT: ${procedureMessage}`
+        );
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error creating rental:', error);
+        res.status(500).send('An error occurred while creating the rental.');
+    }
 })
 
 app.post('/rentals/update', async (req, res) => {
@@ -295,6 +343,236 @@ app.post('/members/update', async (req, res) => {
     } catch (error) {
         console.error('Error updating member', error); 
         res.status(500).send('An error occured while updating member.');
+    }
+})
+
+app.post('/memberTiers/update', async(req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_update_membertiers(?, ?, ?, ?);`;
+
+        const [result] = await db.query(query1, [
+            data.update_tier_id,
+            data.update_fee, 
+            data.update_discount,
+            data.update_rental_period
+        ]);
+
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `UPDATE Membership Tier. ID: ${data.update_tier_id}, ` +
+            `Result: ${procedureMessage}`
+        );
+
+        res.status(200).json({message: procedureMessage});
+    } catch (error) {
+        console.error('Error updating tier', error);
+        res.status(500).send('An error occured while updating tier.');
+    }
+})
+
+app.post('/tools/create', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_create_tool(?, ?, ?, ?);`;
+
+        const [result] = await db.query(query1, [
+            data.name,
+            data.condition,
+            data.membership_tier,
+            data.rental_fee
+        ]);
+
+        const createdToolID = result[0][0].tool_id;
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `CREATE Tool. ID: ${createdToolID},` +
+            `RESULT: ${procedureMessage}`
+        );
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error creating tool', error);
+        res.status(500).send('An error occurred while creating tool.');
+    }
+})
+
+
+app.post('/tools/update', async(req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_update_tool(?, ?, ?, ?, ?);`;
+
+        const [result] = await db.query(query1, [
+            data.update_tool_id, 
+            data.update_tool_name, 
+            data.update_tool_condition,
+            data.update_tool_tier,
+            data.update_rental_fee
+        ]);
+
+        const procedureMessage = result[0][0].RESULT;
+
+        console.log(
+            `UPDATE Tool. ID: ${data.update_tool_id}, ` +
+            `RESULT: ${procedureMessage}`
+        );
+
+        res.status(200).json({message: procedureMessage});
+    } catch (error) {
+        console.error('Error updating tier', error);
+        res.status(500).send('An error occured while updating tool.');
+    }
+})
+
+app.post('/tools/delete', async (req, res) => {
+    try { 
+        const data = req.body;
+
+        const query1 = `CALL sp_delete_tool(?);`;
+
+        const result = await db.query(query1, [data.delete_tool_id]);
+
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `DELETE Tool. RESULT: ${procedureMessage}`
+        );
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error deleting tool', error);
+        res.status(500).send('An error occured while deleting tool.');
+    }
+})
+
+app.post('/classes/create', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_create_class(?, ?, ?, ?, ?, ?);`;
+
+        const result = await db.query(query1, [
+            data.instructor_name,
+            data.class_name,
+            data.description,
+            data.capacity,
+            data.start_date,
+            data.end_date
+        ]);
+
+        const createdClassID = result[0][0][0].class_id;
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `CREATE Class. ID: ${createdClassID}, ` +
+            `RESULT: ${procedureMessage}`
+        )
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error creating class', error);
+        res.status(500).send('An error occured while creating class.');
+    }
+})
+
+app.post('/classes/update', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_update_class(?, ?, ?, ?, ?, ?, ?);`;
+
+        const result = await db.query(query1, [
+            data.update_class_id,
+            data.update_instructor_name,
+            data.update_course_name,
+            data.update_course_description,
+            data.update_capacity,
+            data.update_start_date,
+            data.update_end_date
+        ]);
+
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `UPDATE Class. ID: ${data.update_class_id}, ` +
+            `RESULT: ${procedureMessage}`
+        )
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error updating class', error);
+        res.status(500).send('An error occured while updating class.');
+    }
+})
+
+app.post('/classes/delete', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_delete_class(?);`;
+
+        const result = await db.query(query1, [data.delete_class_id]);
+
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `DELETE Class. RESULT: ${procedureMessage}`
+        )
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error deleting class', error);
+        res.status(500).send('An error occurred while deleting the class.');
+    }
+})
+
+app.post('/class-registrations/create', async (req, res) => {
+    try {
+        const data = req.body;
+        
+        const query1 = `CALL sp_create_registration(?, ?);`;
+
+        const result = await db.query(query1, [
+            data.member_id,
+            data.class_id
+        ])
+
+        const createdRegistrationID = result[0][0][0].class_registration_id;
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `CREATE Registration. ID: ${createdRegistrationID}, ` +
+            `RESULT: ${procedureMessage}`
+        )
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error creating registration', error);
+        res.status(500).send('An error occured while registering.');
+    }
+})
+
+app.post('/class-registrations/delete', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const query1 = `CALL sp_delete_registration(?);`;
+
+        const result = await db.query(query1, [data.delete_registration_id])
+
+        const procedureMessage = result[0][0][0].RESULT;
+
+        console.log(
+            `DELETE Registration. RESULT: ${procedureMessage}`
+        )
+
+        res.status(200).json({message: procedureMessage})
+    } catch (error) {
+        console.error('Error deleting registration', error);
+        res.status(500).send('An error occured while deleting registration.');
     }
 })
 

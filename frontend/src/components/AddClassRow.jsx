@@ -22,7 +22,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch(backendURL + 'classes/create', {
+            const response = await fetch(backendURL + '/classes/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -33,7 +33,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                 refresh();
                 onCancel();
             } else {
-                console.log('Error creating tool.');
+                console.log('Error creating class.');
             }
         } catch (error) {
             console.error('Error during class creation: ', error)
@@ -72,6 +72,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                     name='description'
                     id='description'
                     value={formData.description}
+                    onChange={handleChange}
                     placeholder="Description"
                 />
             </td>
@@ -82,6 +83,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                     name='capacity'
                     id='capacity'
                     value={formData.capacity}
+                    onChange={handleChange}
                     placeholder="Capacity"
                 />
             </td>
@@ -92,6 +94,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                     type='date'
                     name='start_date'
                     id='start_date'
+                    onChange={handleChange}
                     value={formData.start_date}
                 />
             </td>
@@ -101,6 +104,7 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                     type='date'
                     name='end_date'
                     id='end_date'
+                    onChange={handleChange}
                     value={formData.end_date}
                 />
             </td>
@@ -110,8 +114,6 @@ const AddClassRow = ({ backendURL, refresh, onCancel }) => {
                 <button type="button" className="cancel-button" onClick={onCancel}>Cancel</button>
             </td>
         </tr>
-        
-            
 
     );
 };

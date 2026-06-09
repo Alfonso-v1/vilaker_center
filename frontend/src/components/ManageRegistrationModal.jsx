@@ -12,32 +12,38 @@
 
 import { useState, useEffect } from "react"; 
 import TableRow from "./TableRow";
-import CreateClassRegistrationForm from "./CreateClassRegistrationForm";
+import AddRegistrationRow from "./AddRegistrationRow";
+import DeleteRegistrationForm from "./DeleteRegistrationForm";
 
 const ManageRegistrationModal = ({ members, classes, backendURL }) => {
     
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState('');
     const [registrations, setRegistrations] = useState([]);
-    const [newClassId, setNewClassId] = useState('');
+    const [deletingRow, setDeletingRow] = useState(null);
+    const [addingRegistration, setAddingRegistration] = useState(false);
+
+    const selectedMemberData = members.find(
+        (member) => String(member.member_id) === String(selectedMember)
+    );
+
+    const refreshRegistrations = async () => {
+        if (!selectedMember) return;
+
+        const res = await fetch(`${backendURL}/memberRegistrations/${selectedMember}`);
+        const data = await res.json();
+        setRegistrations(data.registrations);
+    }
 
     useEffect(() => {
-        const loadRegistrations = async () => {
-            if (!selectedMember) {
-                setRegistrations([]);
-                return;
-            }
-            const res = await fetch(`${backendURL}/memberRegistrations/${selectedMember}`);
-            const data = await res.json();
-            setRegistrations(data.registrations);
-        };
-        loadRegistrations();
+        refreshRegistrations();
     }, [selectedMember, backendURL]);
     
     const closeModal = () => {
         setIsOpen(false);
         setSelectedMember('');
         setRegistrations([]);
+        setAddingRegistration(false);
     }
     
     return (
@@ -48,7 +54,10 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
                     <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
                         <h2>Manage Registrations</h2>
                         <label htmlFor="selectedMember">Member: </label>
-                        <select value={selectedMember} onChange={(e) => setSelectedMember(e.target.value)}>
+                        <select id="selectedMember" value={selectedMember} onChange={(e) => {
+                            setSelectedMember(e.target.value);
+                            setAddingRegistration(false);
+                            }}>
                             <option value=''>Select a Member</option>
                             {members.map((member) => (
                                 <option key={member.member_id} value={member.member_id}>
@@ -56,37 +65,53 @@ const ManageRegistrationModal = ({ members, classes, backendURL }) => {
                                 </option>
                             ))}
                             </select>
-                            {registrations.length > 0 &&
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            {Object.keys(registrations[0]).map((header, index) => (
-                                                <th key={index}>{header}</th>
+
+                            {selectedMember && (
+                                <div>
+                                    <table> 
+                                        <thead>
+                                            <tr>
+                                                <th>Registration ID</th>
+                                                <th>Member Name</th>
+                                                <th>Class</th>
+                                                <th>Begins On</th>
+                                                <th>Ends On</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {registrations.map((registration, index) => (
+                                            <TableRow key={index} rowObject={registration} backendURL={backendURL} refresh={refreshRegistrations} showUpdate={false} onDelete={() => setDeletingRow(registration)} />
                                             ))}
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {registrations.map((registration, index) => (
-                                        <TableRow key={index} rowObject={registration} backendURL={backendURL} refresh={async () => {
-                                            const res = await fetch(`${backendURL}/memberRegistrations/${selectedMember}`);
-                                            const data = await res.json();
-                                            setRegistrations(data.registrations)
-                                        }} showUpdate={false} />
-                                        ))}
-                                    </tbody>
-                            </table>
-                        }
-                        {selectedMember && registrations.length === 0 && (
-                            <p>No registrations found for this member.</p>
-                        )}
-                        {selectedMember &&
-                            <CreateClassRegistrationForm classes={classes} member_id={selectedMember} backendURL={backendURL} refresh={async () => {
-                                const res = await fetch(`${backendURL}/memberRegistrations/${selectedMember}`);
-                                const data = await res.json();
-                                setRegistrations(data.registrations);
-                                }} />
-                        }
+
+                                            {addingRegistration && selectedMemberData && (
+                                                <AddRegistrationRow memberData={selectedMemberData} classes={classes} backendURL={backendURL} refresh={refreshRegistrations} onCancel={() => setAddingRegistration(false)} />
+                                            )}
+                                        </tbody>
+                                    </table>
+
+                                    {registrations.length === 0 && !addingRegistration && (
+                                        <p>No registrations found for this member.</p>
+                                    )}
+
+                                    <div className='add-row-section'>
+                                        <button type='button' className='add-row-button' onClick={() => setAddingRegistration(true)}>Add Registration</button>    
+                                    </div>
+                                    
+                                    {deletingRow && 
+                                        <div className="modal-overlay" onClick={() => setDeletingRow(null)}>
+                                            <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+                                                <DeleteRegistrationForm registrationData={deletingRow} backendURL={backendURL} refresh={refreshRegistrations} onClose={() => setDeletingRow(null)} />
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                </div>
+                            )}
+
+                        
+
                     <button className='modal-close-btn' onClick={closeModal}>Close</button>
                     </div>
                     </div>
